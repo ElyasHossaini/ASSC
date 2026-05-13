@@ -72,7 +72,7 @@ npm run start
 ## Organization Info
 
 - **Address:** 3003 10 St NW, Calgary, AB T2K 1H2
-- **Phone:** 493-861-3835
+- **Phone:** 403-861-3835
 - **Email:** Ghorban1976@yahoo.com
 
 ## Notes
