@@ -1,0 +1,86 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-primary: #064e3b;
+  --color-secondary: #1e3a8a;
+  --color-accent: #d97706;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+}
+
+body {
+  color: #1f2937;
+  background-color: #fafaf7;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@layer base {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-display tracking-tight;
+  }
+}
+
+@layer components {
+  .container-wide {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-emeraldDark-800 px-6 py-3 text-sm font-semibold text-white shadow-elegant transition-all duration-300 hover:bg-emeraldDark-900 hover:shadow-glow focus:outline-none focus:ring-2 focus:ring-emeraldDark-700 focus:ring-offset-2 sm:text-base;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border-2 border-gold-500 bg-transparent px-6 py-3 text-sm font-semibold text-gold-600 transition-all duration-300 hover:bg-gold-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-gold-500 focus:ring-offset-2 sm:text-base;
+  }
+
+  .btn-outline-white {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border-2 border-white/80 bg-white/10 px-6 py-3 text-sm font-semibold text-white backdrop-blur transition-all duration-300 hover:bg-white hover:text-emeraldDark-900 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-emeraldDark-900 sm:text-base;
+  }
+
+  .section-heading {
+    @apply text-3xl font-bold tracking-tight text-emeraldDark-900 sm:text-4xl lg:text-5xl;
+  }
+
+  .section-eyebrow {
+    @apply mb-3 inline-flex items-center gap-2 rounded-full bg-gold-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-gold-700 ring-1 ring-gold-200;
+  }
+
+  .card {
+    @apply rounded-2xl bg-white p-6 shadow-soft ring-1 ring-emeraldDark-900/5 transition-all duration-300 hover:-translate-y-1 hover:shadow-elegant;
+  }
+
+  .divider-pattern {
+    @apply relative flex items-center justify-center gap-3 text-gold-500;
+  }
+
+  .divider-pattern::before,
+  .divider-pattern::after {
+    content: "";
+    @apply h-px w-16 bg-gradient-to-r from-transparent via-gold-300 to-transparent sm:w-24;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .bg-radial-emerald {
+    background-image: radial-gradient(
+      ellipse at top,
+      rgba(6, 78, 59, 0.08) 0%,
+      transparent 60%
+    );
+  }
+}
