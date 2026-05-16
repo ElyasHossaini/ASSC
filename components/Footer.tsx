@@ -158,12 +158,12 @@ export default function Footer() {
           <div className="flex items-center gap-4 text-emeraldDark-300">
             <p>Built with care for the community.</p>
             <span aria-hidden className="text-emeraldDark-400">·</span>
-            <a
+            <Link
               href="/?admin#upcoming"
               className="text-emeraldDark-300 transition hover:text-gold-300"
             >
               Organizer
-            </a>
+            </Link>
           </div>
         </div>
       </div>
