@@ -85,15 +85,15 @@ export default function EventsSection() {
           <div className="max-w-2xl">
             <p className="section-eyebrow">
               <span className="h-1.5 w-1.5 rounded-full bg-gold-500" />
-              Upcoming Events
+              Weekly &amp; Seasonal Events
             </p>
             <h2 className="section-heading">
-              Join us at our{" "}
+              Our regular{" "}
               <span className="text-gold-600">community gatherings</span>.
             </h2>
             <p className="mt-4 text-base leading-relaxed text-gray-600 sm:text-lg">
-              Visit our centre throughout the week and during the holy months
-              for prayer, learning, and community.
+              These are the recurring programs you can count on throughout the
+              week and during the holy months — open to all families and visitors.
             </p>
           </div>
           <a
