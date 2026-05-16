@@ -66,19 +66,60 @@ type ApiResponse =
   | { ok: true; [key: string]: unknown }
   | { ok: false; error?: string };
 
+type XhrResult =
+  | { ok: true; status: number; body: string }
+  | { ok: false; error: string };
+
+// Wallet / dapp browser extensions (Phantom, MetaMask, Coinbase Wallet, etc.)
+// wrap `window.fetch` and surface their own "Failed to fetch" errors that
+// the Next.js dev overlay then displays even when our code catches them.
+// XMLHttpRequest is rarely wrapped by these extensions, so we use it for
+// our Apps Script calls to keep the dev experience clean.
+function xhrGet(url: string): Promise<XhrResult> {
+  return new Promise((resolve) => {
+    try {
+      const xhr = new XMLHttpRequest();
+      xhr.open("GET", url, true);
+      xhr.responseType = "text";
+      // 20s safety net so a hung request can't keep loading state stuck.
+      xhr.timeout = 20000;
+      xhr.onreadystatechange = () => {
+        if (xhr.readyState !== 4) return;
+        if (xhr.status === 0) {
+          resolve({ ok: false, error: "network" });
+          return;
+        }
+        resolve({ ok: true, status: xhr.status, body: xhr.responseText });
+      };
+      xhr.onerror = () => resolve({ ok: false, error: "network" });
+      xhr.ontimeout = () => resolve({ ok: false, error: "timeout" });
+      xhr.send();
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "network";
+      resolve({ ok: false, error: message });
+    }
+  });
+}
+
+// All network access goes through callApi. It NEVER throws — every failure
+// returns `{ ok: false, error }`.
 async function callApi(params: Record<string, string>): Promise<ApiResponse> {
-  if (!ENDPOINT) throw new Error("RSVP endpoint not configured");
+  if (!ENDPOINT) return { ok: false, error: "RSVP endpoint not configured" };
   const url = new URL(ENDPOINT);
   Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
   // Cache-buster so updates show up immediately.
   url.searchParams.set("_t", String(Date.now()));
 
-  const res = await fetch(url.toString(), {
-    method: "GET",
-    redirect: "follow",
-  });
-  if (!res.ok) throw new Error(`Network error (${res.status})`);
-  return (await res.json()) as ApiResponse;
+  const result = await xhrGet(url.toString());
+  if (!result.ok) return { ok: false, error: result.error };
+  if (result.status < 200 || result.status >= 300) {
+    return { ok: false, error: `Network error (${result.status})` };
+  }
+  try {
+    return JSON.parse(result.body) as ApiResponse;
+  } catch {
+    return { ok: false, error: "invalid_json" };
+  }
 }
 
 export async function listRsvps(eventId: string): Promise<Rsvp[]> {

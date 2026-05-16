@@ -375,6 +375,7 @@ export default function UpcomingEventCard({
                   disabled={refreshing}
                   aria-label={t.upcoming.refresh}
                   className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-emeraldDark-700 transition hover:bg-emeraldDark-50 disabled:opacity-50"
+                  suppressHydrationWarning
                 >
                   <RefreshCw
                     className={`h-3 w-3 ${refreshing ? "animate-spin" : ""}`}
@@ -437,6 +438,7 @@ export default function UpcomingEventCard({
                   setFormError(null);
                 }}
                 className="btn-primary mt-6 w-full"
+                suppressHydrationWarning
               >
                 <CalendarHeart className="h-4 w-4" aria-hidden />
                 {t.upcoming.rsvpButton}
@@ -553,6 +555,7 @@ export default function UpcomingEventCard({
                       setFormError(null);
                     }}
                     className="inline-flex w-full items-center justify-center gap-2 rounded-full border-2 border-emeraldDark-900/10 bg-white px-6 py-3 text-sm font-semibold text-emeraldDark-900 transition hover:bg-emeraldDark-50 sm:w-auto"
+                    suppressHydrationWarning
                   >
                     <X className="h-4 w-4" aria-hidden />
                     {t.upcoming.cancel}
@@ -572,6 +575,7 @@ export default function UpcomingEventCard({
                     type="button"
                     onClick={() => refresh()}
                     className="text-xs font-semibold text-red-600 underline-offset-2 hover:underline"
+                    suppressHydrationWarning
                   >
                     {t.upcoming.retry}
                   </button>
