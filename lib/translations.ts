@@ -424,7 +424,7 @@ const en = {
     builtWith: "Built with care for the community.",
     organizer: "Organizer",
   },
-} as const;
+};
 
 // --- Farsi (Persian / Dari) translations ---
 // Translated to communicate the same meaning, tuned for an Afghan
