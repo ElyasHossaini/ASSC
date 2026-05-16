@@ -1,35 +1,20 @@
+"use client";
+
 import Image from "next/image";
 import {
   BookOpenText,
   HeartHandshake,
   Sparkles,
   Users,
+  type LucideIcon,
 } from "lucide-react";
+import { useLanguage } from "./LanguageProvider";
 
-const VALUES = [
-  {
-    icon: BookOpenText,
-    title: "Faith & Worship",
-    text: "Daily prayers, Quran recitation, and Islamic learning rooted in the teachings of Ahlul Bayt (a.s.).",
-  },
-  {
-    icon: Users,
-    title: "Unity & Family",
-    text: "A welcoming home for elders, families, youth, and newcomers in Calgary.",
-  },
-  {
-    icon: HeartHandshake,
-    title: "Service & Charity",
-    text: "Supporting one another through community programs, mutual aid, and charitable work.",
-  },
-  {
-    icon: Sparkles,
-    title: "Afghan Heritage",
-    text: "Preserving our Afghan Islamic identity, language, and traditions for future generations.",
-  },
-];
+const VALUE_ICONS: LucideIcon[] = [BookOpenText, Users, HeartHandshake, Sparkles];
 
 export default function AboutSection() {
+  const { t } = useLanguage();
+
   return (
     <section
       id="about"
@@ -54,18 +39,17 @@ export default function AboutSection() {
             </div>
 
             {/* Floating accent card */}
-            <div className="absolute -bottom-8 -right-6 hidden max-w-xs rounded-2xl bg-white p-6 shadow-elegant ring-1 ring-gold-200 sm:block">
+            <div className="absolute -bottom-8 end-[-1.5rem] hidden max-w-xs rounded-2xl bg-white p-6 shadow-elegant ring-1 ring-gold-200 sm:block">
               <div className="flex items-start gap-4">
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gold-50 text-gold-600 ring-1 ring-gold-200">
                   <Sparkles className="h-6 w-6" aria-hidden />
                 </div>
                 <div>
                   <p className="font-display text-lg font-semibold text-emeraldDark-900">
-                    Rooted in Faith
+                    {t.about.rootedTitle}
                   </p>
                   <p className="mt-1 text-sm text-gray-600">
-                    Following the path of the Ahlul Bayt (a.s.) with sincerity
-                    and love.
+                    {t.about.rootedText}
                   </p>
                 </div>
               </div>
@@ -73,45 +57,33 @@ export default function AboutSection() {
 
             <div
               aria-hidden
-              className="absolute -left-6 -top-6 -z-10 h-40 w-40 rounded-2xl bg-gold-100 ring-1 ring-gold-200"
+              className="absolute -start-6 -top-6 -z-10 h-40 w-40 rounded-2xl bg-gold-100 ring-1 ring-gold-200"
             />
           </div>
 
           <div>
             <p className="section-eyebrow">
               <span className="h-1.5 w-1.5 rounded-full bg-gold-500" />
-              About Our Society
+              {t.about.eyebrow}
             </p>
             <h2 className="section-heading">
-              A community of faith, family,{" "}
-              <span className="text-gold-600">and service</span>.
+              {t.about.headingA}{" "}
+              <span className="text-gold-600">{t.about.headingB}</span>.
             </h2>
 
             <div className="mt-6 space-y-4 text-base leading-relaxed text-gray-700 sm:text-lg">
               <p>
-                The <strong>Afghanistan Shia Society of Calgary</strong> is a
-                community organization dedicated to serving the Afghan Shia
-                Muslim community in Calgary. We provide religious,
-                educational, cultural, and social programs that nurture faith,
-                strengthen families, and bring our community together.
+                {t.about.p1Pre}{" "}
+                <strong>{t.about.p1Strong}</strong>
+                {t.about.p1Post}
               </p>
-              <p>
-                From daily prayers and Quran classes to youth programs,
-                Muharram majalis, and Ramadan iftars, our doors are open to
-                every member of the community — elders, families, youth, and
-                newcomers alike.
-              </p>
-              <p>
-                Our mission is to preserve our Afghan Islamic identity,
-                support one another through worship and service, and raise a
-                new generation grounded in the timeless values of Islam and
-                the teachings of the Ahlul Bayt (a.s.).
-              </p>
+              <p>{t.about.p2}</p>
+              <p>{t.about.p3}</p>
             </div>
 
             <div className="mt-10 grid gap-4 sm:grid-cols-2">
-              {VALUES.map((v) => {
-                const Icon = v.icon;
+              {t.about.values.map((v, i) => {
+                const Icon = VALUE_ICONS[i] ?? Sparkles;
                 return (
                   <div
                     key={v.title}

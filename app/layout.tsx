@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { Inter, Playfair_Display, Amiri } from "next/font/google";
+import { Inter, Playfair_Display, Amiri, Vazirmatn } from "next/font/google";
 import "./globals.css";
+import { LanguageProvider } from "@/components/LanguageProvider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -21,6 +22,12 @@ const amiri = Amiri({
   display: "swap",
 });
 
+const vazirmatn = Vazirmatn({
+  subsets: ["arabic", "latin"],
+  variable: "--font-vazirmatn",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: {
     default: "Afghanistan Shia Society of Calgary",
@@ -36,6 +43,7 @@ export const metadata: Metadata = {
     "Hussainiya Calgary",
     "Shia mosque Calgary",
     "Afghan community Calgary",
+    "انجمن شیعیان افغانستان کلگری",
   ],
   openGraph: {
     title: "Afghanistan Shia Society of Calgary",
@@ -46,6 +54,11 @@ export const metadata: Metadata = {
   },
 };
 
+// This script runs synchronously before React hydrates so the <html lang/dir>
+// is correct on first paint (prevents a flash of wrong layout direction for
+// Farsi-default users). React's LanguageProvider then takes over.
+const langInitScript = `(function(){try{var s=localStorage.getItem("assc:lang");var l=s;if(l!=="en"&&l!=="fa"){var n=(navigator.language||"").toLowerCase();l=(n.indexOf("fa")===0||n.indexOf("prs")===0||n.indexOf("ps")===0)?"fa":"en";}var h=document.documentElement;h.lang=l;h.dir=(l==="fa")?"rtl":"ltr";}catch(e){}})();`;
+
 export default function RootLayout({
   children,
 }: {
@@ -54,9 +67,16 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${playfair.variable} ${amiri.variable}`}
+      dir="ltr"
+      className={`${inter.variable} ${playfair.variable} ${amiri.variable} ${vazirmatn.variable}`}
+      suppressHydrationWarning
     >
-      <body className="font-sans">{children}</body>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: langInitScript }} />
+      </head>
+      <body className="font-sans" suppressHydrationWarning>
+        <LanguageProvider>{children}</LanguageProvider>
+      </body>
     </html>
   );
 }

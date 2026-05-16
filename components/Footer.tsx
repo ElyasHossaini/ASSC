@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -11,6 +13,7 @@ import {
   Mail,
 } from "lucide-react";
 import { NAV_LINKS, SITE } from "@/lib/site";
+import { useLanguage } from "./LanguageProvider";
 
 const SOCIALS = [
   { name: "Facebook", href: "#", icon: Facebook },
@@ -21,6 +24,8 @@ const SOCIALS = [
 ];
 
 export default function Footer() {
+  const { t } = useLanguage();
+
   return (
     <footer
       id="contact"
@@ -48,20 +53,19 @@ export default function Footer() {
               </div>
               <div>
                 <p className="font-display text-lg font-bold leading-tight text-white">
-                  Afghanistan Shia Society
+                  {t.nav.siteFullName}
                 </p>
                 <p className="text-xs font-medium uppercase tracking-widest text-gold-300">
-                  of Calgary
+                  {t.nav.siteSubName}
                 </p>
               </div>
             </Link>
 
             <p className="mt-5 max-w-md text-sm leading-relaxed text-emeraldDark-200">
-              A welcoming Afghan Shia Muslim community in Calgary — serving
-              through worship, education, culture, and community support.
+              {t.footer.description}
             </p>
 
-            <p className="mt-5 font-arabic text-base text-gold-300">
+            <p className="mt-5 font-arabic text-base text-gold-300" dir="rtl">
               وَأَنَّ ٱلْمَسَٰجِدَ لِلَّهِ فَلَا تَدْعُوا۟ مَعَ ٱللَّهِ أَحَدًا
             </p>
 
@@ -87,7 +91,7 @@ export default function Footer() {
           {/* Quick links */}
           <div className="lg:col-span-3">
             <h3 className="font-display text-base font-semibold uppercase tracking-widest text-gold-300">
-              Quick Links
+              {t.footer.quickLinks}
             </h3>
             <ul className="mt-5 grid grid-cols-2 gap-y-2.5 text-sm">
               {NAV_LINKS.map((link) => (
@@ -96,7 +100,7 @@ export default function Footer() {
                     href={link.href}
                     className="text-emeraldDark-200 transition-colors hover:text-gold-300"
                   >
-                    {link.label}
+                    {t.nav[link.key]}
                   </a>
                 </li>
               ))}
@@ -106,7 +110,7 @@ export default function Footer() {
           {/* Contact */}
           <div className="lg:col-span-4">
             <h3 className="font-display text-base font-semibold uppercase tracking-widest text-gold-300">
-              Get in Touch
+              {t.footer.getInTouch}
             </h3>
             <ul className="mt-5 space-y-3 text-sm">
               <li className="flex items-start gap-3">
@@ -131,6 +135,7 @@ export default function Footer() {
                 <a
                   href={SITE.phoneHref}
                   className="text-emeraldDark-100 transition hover:text-gold-300"
+                  dir="ltr"
                 >
                   {SITE.phone}
                 </a>
@@ -143,6 +148,7 @@ export default function Footer() {
                 <a
                   href={SITE.emailHref}
                   className="break-all text-emeraldDark-100 transition hover:text-gold-300"
+                  dir="ltr"
                 >
                   {SITE.email}
                 </a>
@@ -153,16 +159,18 @@ export default function Footer() {
 
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 text-xs text-emeraldDark-200 sm:flex-row">
           <p>
-            &copy; 2026 {SITE.name}. All rights reserved.
+            &copy; 2026 {SITE.name}. {t.footer.rights}
           </p>
           <div className="flex items-center gap-4 text-emeraldDark-300">
-            <p>Built with care for the community.</p>
-            <span aria-hidden className="text-emeraldDark-400">·</span>
+            <p>{t.footer.builtWith}</p>
+            <span aria-hidden className="text-emeraldDark-400">
+              ·
+            </span>
             <Link
               href="/?admin#upcoming"
               className="text-emeraldDark-300 transition hover:text-gold-300"
             >
-              Organizer
+              {t.footer.organizer}
             </Link>
           </div>
         </div>

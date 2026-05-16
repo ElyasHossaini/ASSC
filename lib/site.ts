@@ -12,13 +12,15 @@ export const SITE = {
 } as const;
 
 export const NAV_LINKS = [
-  { label: "Home", href: "#home" },
-  { label: "Prayer Times", href: "#prayer-times" },
-  { label: "About", href: "#about" },
-  { label: "Programs", href: "#programs" },
-  { label: "Upcoming", href: "#upcoming" },
-  { label: "Weekly Events", href: "#events" },
-  { label: "Gallery", href: "#gallery" },
-  { label: "Donations", href: "#donations" },
-  { label: "Contact", href: "#contact" },
+  { key: "home", href: "#home" },
+  { key: "prayerTimes", href: "#prayer-times" },
+  { key: "about", href: "#about" },
+  { key: "programs", href: "#programs" },
+  { key: "upcoming", href: "#upcoming" },
+  { key: "weeklyEvents", href: "#events" },
+  { key: "gallery", href: "#gallery" },
+  { key: "donations", href: "#donations" },
+  { key: "contact", href: "#contact" },
 ] as const;
+
+export type NavKey = (typeof NAV_LINKS)[number]["key"];

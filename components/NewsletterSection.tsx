@@ -12,8 +12,11 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import { SITE } from "@/lib/site";
+import { useLanguage } from "./LanguageProvider";
+import type { translations } from "@/lib/translations";
 
 type Status = "idle" | "submitting" | "success" | "error";
+type Dict = (typeof translations)["en"];
 
 type FormState = {
   firstName: string;
@@ -29,20 +32,16 @@ const EMPTY: FormState = {
   phone: "",
 };
 
-// Configure in .env.local — see NEWSLETTER_SETUP.md for instructions.
-// Example: NEXT_PUBLIC_NEWSLETTER_ENDPOINT="https://script.google.com/macros/s/AKfy.../exec"
 const ENDPOINT = process.env.NEXT_PUBLIC_NEWSLETTER_ENDPOINT;
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-function validate(form: FormState): string | null {
-  if (form.firstName.trim().length < 1) return "Please enter your first name.";
-  if (form.lastName.trim().length < 1) return "Please enter your last name.";
-  if (!EMAIL_RE.test(form.email.trim()))
-    return "Please enter a valid email address.";
+function validate(form: FormState, t: Dict): string | null {
+  if (form.firstName.trim().length < 1) return t.newsletter.errors.firstName;
+  if (form.lastName.trim().length < 1) return t.newsletter.errors.lastName;
+  if (!EMAIL_RE.test(form.email.trim())) return t.newsletter.errors.email;
   const digits = form.phone.replace(/\D/g, "");
-  if (digits.length < 10)
-    return "Please enter a valid phone number (at least 10 digits).";
+  if (digits.length < 10) return t.newsletter.errors.phone;
   return null;
 }
 
@@ -64,6 +63,7 @@ function buildMailtoFallback(form: FormState): string {
 }
 
 export default function NewsletterSection() {
+  const { t } = useLanguage();
   const [form, setForm] = useState<FormState>(EMPTY);
   const [status, setStatus] = useState<Status>("idle");
   const [message, setMessage] = useState<string | null>(null);
@@ -74,7 +74,7 @@ export default function NewsletterSection() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const err = validate(form);
+    const err = validate(form, t);
     if (err) {
       setStatus("error");
       setMessage(err);
@@ -93,17 +93,13 @@ export default function NewsletterSection() {
       source: "website",
     };
 
-    // If a Google Apps Script endpoint is configured, POST to it.
-    // Otherwise fall back to opening the user's mail client.
     if (ENDPOINT) {
       try {
         const body = new URLSearchParams();
-        Object.entries(payload).forEach(([k, v]) => body.append(k, String(v)));
+        Object.entries(payload).forEach(([k, v]) =>
+          body.append(k, String(v))
+        );
 
-        // `no-cors` ensures the request is delivered to Google Apps Script
-        // even when CORS headers are missing on the redirect chain.
-        // We can't read the response in this mode; we treat a non-thrown
-        // fetch as a successful append.
         await fetch(ENDPOINT, {
           method: "POST",
           mode: "no-cors",
@@ -111,23 +107,16 @@ export default function NewsletterSection() {
         });
 
         setStatus("success");
-        setMessage(
-          "You're on the list! We'll be in touch with community updates and event invitations."
-        );
+        setMessage(t.newsletter.successPosted);
         setForm(EMPTY);
       } catch {
         setStatus("error");
-        setMessage(
-          "We couldn't submit your information. Please try again or email us directly."
-        );
+        setMessage(t.newsletter.errors.submit);
       }
     } else {
-      // Mailto fallback — opens the user's email app pre-filled.
       window.location.href = buildMailtoFallback(form);
       setStatus("success");
-      setMessage(
-        "Thanks! Your email app should open with a pre-filled message — just hit send to complete your signup."
-      );
+      setMessage(t.newsletter.successMailto);
       setForm(EMPTY);
     }
   };
@@ -159,15 +148,14 @@ export default function NewsletterSection() {
         <div className="mx-auto max-w-2xl text-center">
           <span className="mb-3 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-gold-300 ring-1 ring-white/20">
             <MailOpen className="h-3.5 w-3.5" aria-hidden />
-            Stay Connected
+            {t.newsletter.eyebrow}
           </span>
           <h2 className="font-display text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
-            Join our <span className="text-gold-400">community list</span>
+            {t.newsletter.headingA}{" "}
+            <span className="text-gold-400">{t.newsletter.headingB}</span>
           </h2>
           <p className="mt-5 text-base leading-relaxed text-emeraldDark-100 sm:text-lg">
-            Be the first to hear about upcoming events, prayer times, programs,
-            and community announcements from the Afghanistan Shia Society of
-            Calgary.
+            {t.newsletter.intro}
           </p>
         </div>
 
@@ -178,7 +166,7 @@ export default function NewsletterSection() {
                 <CheckCircle2 className="h-8 w-8" />
               </span>
               <h3 className="mt-5 font-display text-2xl font-semibold text-emeraldDark-900">
-                Thank you!
+                {t.newsletter.thankYouTitle}
               </h3>
               <p className="mt-3 max-w-md text-sm leading-relaxed text-gray-600">
                 {message}
@@ -188,7 +176,7 @@ export default function NewsletterSection() {
                 onClick={reset}
                 className="mt-6 text-sm font-semibold text-emeraldDark-800 underline-offset-4 hover:text-gold-600 hover:underline"
               >
-                Sign up another person
+                {t.newsletter.addAnother}
               </button>
             </div>
           ) : (
@@ -196,46 +184,48 @@ export default function NewsletterSection() {
               <div className="grid gap-4 sm:grid-cols-2">
                 <Field
                   id="nl-first"
-                  label="First Name"
+                  label={t.newsletter.firstName}
                   icon={<User className="h-4 w-4" />}
                   value={form.firstName}
                   onChange={update("firstName")}
                   autoComplete="given-name"
-                  placeholder="Ali"
+                  placeholder={t.newsletter.firstPlaceholder}
                   required
                 />
                 <Field
                   id="nl-last"
-                  label="Last Name"
+                  label={t.newsletter.lastName}
                   icon={<User className="h-4 w-4" />}
                   value={form.lastName}
                   onChange={update("lastName")}
                   autoComplete="family-name"
-                  placeholder="Ahmadi"
+                  placeholder={t.newsletter.lastPlaceholder}
                   required
                 />
               </div>
               <Field
                 id="nl-email"
                 type="email"
-                label="Email"
+                label={t.newsletter.email}
                 icon={<Mail className="h-4 w-4" />}
                 value={form.email}
                 onChange={update("email")}
                 autoComplete="email"
-                placeholder="you@example.com"
+                placeholder={t.newsletter.emailPlaceholder}
                 required
+                ltr
               />
               <Field
                 id="nl-phone"
                 type="tel"
-                label="Phone Number"
+                label={t.newsletter.phone}
                 icon={<Phone className="h-4 w-4" />}
                 value={form.phone}
                 onChange={update("phone")}
                 autoComplete="tel"
-                placeholder="403-555-0123"
+                placeholder={t.newsletter.phonePlaceholder}
                 required
+                ltr
               />
 
               {status === "error" && message && (
@@ -253,19 +243,18 @@ export default function NewsletterSection() {
                 {status === "submitting" ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
-                    Subscribing...
+                    {t.newsletter.subscribing}
                   </>
                 ) : (
                   <>
                     <Send className="h-4 w-4" aria-hidden />
-                    Subscribe
+                    {t.newsletter.subscribe}
                   </>
                 )}
               </button>
 
               <p className="text-center text-xs leading-relaxed text-gray-500">
-                We respect your privacy. Your information is only used to send
-                community updates from ASSC and is never shared.
+                {t.newsletter.privacy}
               </p>
             </form>
           )}
@@ -285,6 +274,8 @@ type FieldProps = {
   placeholder?: string;
   autoComplete?: string;
   required?: boolean;
+  /** Force LTR input direction (useful for email/phone in RTL mode). */
+  ltr?: boolean;
 };
 
 function Field({
@@ -297,6 +288,7 @@ function Field({
   placeholder,
   autoComplete,
   required,
+  ltr,
 }: FieldProps) {
   return (
     <div>
@@ -305,10 +297,10 @@ function Field({
         className="mb-1.5 block text-sm font-semibold text-emeraldDark-900"
       >
         {label}
-        {required && <span className="ml-0.5 text-gold-600">*</span>}
+        {required && <span className="ms-0.5 text-gold-600">*</span>}
       </label>
       <div className="relative">
-        <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400">
+        <span className="pointer-events-none absolute start-3.5 top-1/2 -translate-y-1/2 text-gray-400">
           {icon}
         </span>
         <input
@@ -319,6 +311,7 @@ function Field({
           autoComplete={autoComplete}
           placeholder={placeholder}
           required={required}
+          dir={ltr ? "ltr" : undefined}
           className="w-full rounded-xl border border-emeraldDark-900/10 bg-white px-10 py-2.5 text-sm text-emeraldDark-900 placeholder:text-gray-400 transition focus:border-gold-500 focus:outline-none focus:ring-2 focus:ring-gold-500/30"
         />
       </div>

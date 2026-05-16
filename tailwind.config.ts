@@ -55,6 +55,12 @@ const config: Config = {
         sans: ["var(--font-inter)", "system-ui", "sans-serif"],
         display: ["var(--font-playfair)", "Georgia", "serif"],
         arabic: ["var(--font-amiri)", "Georgia", "serif"],
+        farsi: [
+          "var(--font-vazirmatn)",
+          "Tahoma",
+          "system-ui",
+          "sans-serif",
+        ],
       },
       backgroundImage: {
         "islamic-pattern":

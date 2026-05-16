@@ -33,22 +33,26 @@ import {
   type Rsvp,
 } from "@/lib/rsvp";
 import { SITE } from "@/lib/site";
+import { useLanguage } from "./LanguageProvider";
 
-// Edit these values to update the featured upcoming event.
+// Stable id and image are NOT translated. Visible title/date/location/
+// description come from translations (t.upcoming.event*).
 const EVENT = {
   id: "event-may-2026",
-  title: "Upcoming Community Event",
-  date: "Coming Soon",
-  location: "ASSC Centre",
-  description:
-    "Join us for our next community gathering. Reserve your spot below so we can prepare enough food and seating for your family.",
   image: "/upcoming/WhatsApp%20Image%202026-05-14%20at%209.22.22%20AM.jpeg",
   imageAlt: "Upcoming Afghanistan Shia Society of Calgary community event",
 };
 
+function tpl(str: string, vars: Record<string, string | number>) {
+  return str.replace(/\{\{(\w+)\}\}/g, (_, k) =>
+    vars[k] !== undefined ? String(vars[k]) : `{{${k}}}`
+  );
+}
+
 const REFRESH_INTERVAL_MS = 30_000;
 
 export default function UpcomingEventsSection() {
+  const { t } = useLanguage();
   const [rsvps, setRsvps] = useState<Rsvp[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -99,27 +103,28 @@ export default function UpcomingEventsSection() {
         setListError(null);
       } catch (err) {
         setListError(
-          err instanceof Error
-            ? err.message
-            : "Could not load RSVPs. Please try again."
+          err instanceof Error ? err.message : t.upcoming.errors.network
         );
       } finally {
         setRefreshing(false);
         setLoading(false);
       }
     },
-    []
+    [t]
   );
 
   useEffect(() => {
     refresh();
-    const t = window.setInterval(() => refresh(true), REFRESH_INTERVAL_MS);
+    const timer = window.setInterval(
+      () => refresh(true),
+      REFRESH_INTERVAL_MS
+    );
     const onVisible = () => {
       if (document.visibilityState === "visible") refresh(true);
     };
     document.addEventListener("visibilitychange", onVisible);
     return () => {
-      window.clearInterval(t);
+      window.clearInterval(timer);
       document.removeEventListener("visibilitychange", onVisible);
     };
   }, [refresh]);
@@ -152,11 +157,11 @@ export default function UpcomingEventsSection() {
     const n = typeof count === "number" ? count : Number(count);
 
     if (trimmed.length < 2) {
-      setFormError("Please enter your name (at least 2 characters).");
+      setFormError(t.upcoming.errors.nameMin);
       return;
     }
     if (!Number.isFinite(n) || n < 1 || n > 50) {
-      setFormError("Please enter a valid number of people (1–50).");
+      setFormError(t.upcoming.errors.countInvalid);
       return;
     }
 
@@ -188,19 +193,13 @@ export default function UpcomingEventsSection() {
         // Re-sync with server in the background.
         refresh(true);
       } else if (result.error === "already_rsvped") {
-        setFormError(
-          "This device has already RSVP'd for this event. Please contact the organizer if you need to change your reservation."
-        );
+        setFormError(t.upcoming.errors.alreadyRsvped);
         refresh(true);
       } else {
-        setFormError(
-          "Could not submit your RSVP. Please try again or call the organizer."
-        );
+        setFormError(t.upcoming.errors.submitFailed);
       }
     } catch {
-      setFormError(
-        "Network error. Please check your connection and try again."
-      );
+      setFormError(t.upcoming.errors.network);
     } finally {
       setSubmitting(false);
     }
@@ -210,7 +209,7 @@ export default function UpcomingEventsSection() {
     e.preventDefault();
     const token = adminInput.trim();
     if (token.length < 4) {
-      setAdminError("Please enter your organizer password.");
+      setAdminError(t.upcoming.errors.adminMinPass);
       return;
     }
     setAdminVerifying(true);
@@ -221,13 +220,13 @@ export default function UpcomingEventsSection() {
         setAdminToken(token);
         setAdminTokenState(token);
         setAdminInput("");
-        setAdminFlash("Organizer mode active. Delete buttons are now available.");
+        setAdminFlash(t.upcoming.errors.flashLoggedIn);
         window.setTimeout(() => setAdminFlash(null), 4000);
       } else {
-        setAdminError("Incorrect password. Please try again.");
+        setAdminError(t.upcoming.errors.adminWrong);
       }
     } catch {
-      setAdminError("Could not reach the server. Please try again.");
+      setAdminError(t.upcoming.errors.adminReach);
     } finally {
       setAdminVerifying(false);
     }
@@ -242,8 +241,14 @@ export default function UpcomingEventsSection() {
 
   const handleRemove = async (rsvp: Rsvp) => {
     if (!adminToken) return;
+    const unit =
+      rsvp.count === 1 ? t.upcoming.personOne : t.upcoming.personMany;
     const ok = window.confirm(
-      `Remove ${rsvp.name}'s RSVP (${rsvp.count} ${rsvp.count === 1 ? "person" : "people"})?\n\nTheir device will be able to RSVP again.`
+      tpl(t.upcoming.removeConfirm, {
+        name: rsvp.name,
+        count: rsvp.count,
+        unit,
+      })
     );
     if (!ok) return;
     setRemovingId(rsvp.id);
@@ -261,18 +266,15 @@ export default function UpcomingEventsSection() {
         clearAdminToken();
         setAdminTokenState(null);
         setAdminPanelOpen(true);
-        setAdminError(
-          "Your organizer session expired. Please log in again."
-        );
+        setAdminError(t.upcoming.errors.adminExpired);
       } else if (result.error === "not_found") {
-        // Already removed elsewhere — sync.
         refresh(true);
       } else {
-        setAdminError("Could not remove this RSVP. Please try again.");
+        setAdminError(t.upcoming.errors.removeFailed);
         window.setTimeout(() => setAdminError(null), 4000);
       }
     } catch {
-      setAdminError("Network error while removing RSVP.");
+      setAdminError(t.upcoming.errors.removeNetwork);
       window.setTimeout(() => setAdminError(null), 4000);
     } finally {
       setRemovingId(null);
@@ -295,15 +297,14 @@ export default function UpcomingEventsSection() {
         <div className="mx-auto max-w-3xl text-center">
           <p className="section-eyebrow mx-auto">
             <span className="h-1.5 w-1.5 rounded-full bg-gold-500" />
-            Upcoming Event
+            {t.upcoming.eyebrow}
           </p>
           <h2 className="section-heading">
-            Reserve your seat for our{" "}
-            <span className="text-gold-600">next gathering</span>
+            {t.upcoming.headingA}{" "}
+            <span className="text-gold-600">{t.upcoming.headingB}</span>
           </h2>
           <p className="mt-5 text-base leading-relaxed text-gray-600 sm:text-lg">
-            Let us know how many family members will be joining so we can
-            prepare a warm welcome for everyone.
+            {t.upcoming.intro}
           </p>
           <div className="divider-pattern mt-8">
             <CalendarHeart className="h-4 w-4" aria-hidden />
@@ -329,18 +330,18 @@ export default function UpcomingEventsSection() {
                 <div className="flex flex-wrap items-center gap-2.5 text-sm">
                   <span className="inline-flex items-center gap-1.5 rounded-full bg-gold-500 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-white">
                     <CalendarHeart className="h-3.5 w-3.5" aria-hidden />
-                    {EVENT.date}
+                    {t.upcoming.eventDate}
                   </span>
                   <span className="inline-flex items-center gap-1.5 rounded-full bg-emeraldDark-50 px-3 py-1 text-xs font-medium text-emeraldDark-800 ring-1 ring-emeraldDark-200">
                     <MapPin className="h-3.5 w-3.5 text-gold-600" aria-hidden />
-                    {EVENT.location}
+                    {t.upcoming.eventLocation}
                   </span>
                 </div>
                 <h3 className="font-display text-2xl font-semibold leading-tight text-emeraldDark-900 sm:text-3xl">
-                  {EVENT.title}
+                  {t.upcoming.eventTitle}
                 </h3>
                 <p className="text-sm leading-relaxed text-gray-600 sm:text-base">
-                  {EVENT.description}
+                  {t.upcoming.eventDescription}
                 </p>
               </div>
             </div>
@@ -352,7 +353,7 @@ export default function UpcomingEventsSection() {
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-widest text-gold-600">
-                    Total Attending
+                    {t.upcoming.totalAttending}
                   </p>
                   <p className="mt-1 font-display text-4xl font-bold text-emeraldDark-900 sm:text-5xl">
                     {loading ? "—" : total}
@@ -366,27 +367,30 @@ export default function UpcomingEventsSection() {
               <div className="mt-4 flex flex-wrap items-center gap-2 text-xs text-gray-500">
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-emeraldDark-50 px-3 py-1 font-medium text-emeraldDark-800">
                   {loading ? "…" : rsvps.length}{" "}
-                  {rsvps.length === 1 ? "family" : "families"} RSVP&apos;d
+                  {rsvps.length === 1
+                    ? t.upcoming.familyOne
+                    : t.upcoming.familyMany}{" "}
+                  {t.upcoming.rsvped}
                 </span>
                 {RSVP_ENABLED && (
                   <button
                     type="button"
                     onClick={() => refresh()}
                     disabled={refreshing}
-                    aria-label="Refresh RSVP list"
+                    aria-label={t.upcoming.refresh}
                     className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-emeraldDark-700 transition hover:bg-emeraldDark-50 disabled:opacity-50"
                   >
                     <RefreshCw
                       className={`h-3 w-3 ${refreshing ? "animate-spin" : ""}`}
                       aria-hidden
                     />
-                    Refresh
+                    {t.upcoming.refresh}
                   </button>
                 )}
                 {isAdmin && (
                   <span className="inline-flex items-center gap-1.5 rounded-full bg-gold-50 px-3 py-1 font-semibold uppercase tracking-wider text-gold-700 ring-1 ring-gold-200">
                     <ShieldCheck className="h-3 w-3" aria-hidden />
-                    Organizer
+                    {t.upcoming.organizerBadge}
                   </span>
                 )}
               </div>
@@ -394,16 +398,17 @@ export default function UpcomingEventsSection() {
               {/* Action area: configure / already RSVPed / form / button */}
               {!RSVP_ENABLED ? (
                 <div className="mt-6 rounded-xl bg-gold-50 px-4 py-4 text-sm text-gold-900 ring-1 ring-gold-200">
-                  <p className="font-semibold">RSVPs not yet enabled</p>
+                  <p className="font-semibold">{t.upcoming.disabledTitle}</p>
                   <p className="mt-1 text-gold-800">
-                    Please call{" "}
+                    {t.upcoming.disabledBodyA}{" "}
                     <a
                       href={SITE.phoneHref}
                       className="font-semibold underline-offset-2 hover:underline"
+                      dir="ltr"
                     >
                       {SITE.phone}
                     </a>{" "}
-                    to reserve a spot.
+                    {t.upcoming.disabledBodyB}
                   </p>
                 </div>
               ) : hasRsvped && myEntry ? (
@@ -412,22 +417,25 @@ export default function UpcomingEventsSection() {
                     <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emeraldDark-700" />
                     <div className="min-w-0">
                       <p className="font-semibold text-emeraldDark-900">
-                        You&apos;re on the list!
+                        {t.upcoming.onTheListTitle}
                       </p>
                       <p className="mt-1 text-sm text-emeraldDark-800">
                         <span className="font-medium">{myEntry.name}</span> —{" "}
                         {myEntry.count}{" "}
-                        {myEntry.count === 1 ? "person" : "people"} attending.
+                        {myEntry.count === 1
+                          ? t.upcoming.onTheListPersonOne
+                          : t.upcoming.onTheListPersonMany}
                       </p>
                       <p className="mt-2 text-xs text-emeraldDark-700">
-                        Need to make a change? Call{" "}
+                        {t.upcoming.onTheListChangeA}{" "}
                         <a
                           href={SITE.phoneHref}
                           className="font-semibold underline-offset-2 hover:underline"
+                          dir="ltr"
                         >
                           {SITE.phone}
                         </a>
-                        .
+                        {t.upcoming.onTheListChangeB}
                       </p>
                     </div>
                   </div>
@@ -442,7 +450,7 @@ export default function UpcomingEventsSection() {
                   className="btn-primary mt-6 w-full"
                 >
                   <CalendarHeart className="h-4 w-4" aria-hidden />
-                  Join Event / RSVP
+                  {t.upcoming.rsvpButton}
                 </button>
               ) : (
                 <form onSubmit={handleSubmit} className="mt-6 space-y-4">
@@ -451,14 +459,14 @@ export default function UpcomingEventsSection() {
                       htmlFor="rsvp-name"
                       className="mb-1.5 block text-sm font-semibold text-emeraldDark-900"
                     >
-                      Your Name / Family Name
+                      {t.upcoming.nameLabel}
                     </label>
                     <input
                       id="rsvp-name"
                       type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      placeholder="e.g. Ahmadi Family"
+                      placeholder={t.upcoming.namePlaceholder}
                       maxLength={80}
                       autoFocus
                       className="w-full rounded-xl border border-emeraldDark-900/10 bg-white px-4 py-2.5 text-sm text-emeraldDark-900 placeholder:text-gray-400 focus:border-gold-500 focus:outline-none focus:ring-2 focus:ring-gold-500/30"
@@ -470,12 +478,12 @@ export default function UpcomingEventsSection() {
                       htmlFor="rsvp-count"
                       className="mb-1.5 block text-sm font-semibold text-emeraldDark-900"
                     >
-                      Number of people attending
+                      {t.upcoming.countLabel}
                     </label>
                     <div className="flex items-center gap-2">
                       <button
                         type="button"
-                        aria-label="Decrease"
+                        aria-label={t.upcoming.decrease}
                         onClick={() =>
                           setCount((c) =>
                             Math.max(1, (typeof c === "number" ? c : 1) - 1)
@@ -502,7 +510,7 @@ export default function UpcomingEventsSection() {
                       />
                       <button
                         type="button"
-                        aria-label="Increase"
+                        aria-label={t.upcoming.increase}
                         onClick={() =>
                           setCount((c) =>
                             Math.min(50, (typeof c === "number" ? c : 1) + 1)
@@ -514,7 +522,7 @@ export default function UpcomingEventsSection() {
                       </button>
                     </div>
                     <p className="mt-1.5 text-xs text-gray-500">
-                      Include yourself in the total. One RSVP per device.
+                      {t.upcoming.countHelp}
                     </p>
                   </div>
 
@@ -537,12 +545,12 @@ export default function UpcomingEventsSection() {
                             className="h-4 w-4 animate-spin"
                             aria-hidden
                           />
-                          Submitting…
+                          {t.upcoming.submitting}
                         </>
                       ) : (
                         <>
                           <CheckCircle2 className="h-4 w-4" aria-hidden />
-                          Confirm RSVP
+                          {t.upcoming.confirm}
                         </>
                       )}
                     </button>
@@ -555,7 +563,7 @@ export default function UpcomingEventsSection() {
                       className="inline-flex w-full items-center justify-center gap-2 rounded-full border-2 border-emeraldDark-900/10 bg-white px-6 py-3 text-sm font-semibold text-emeraldDark-900 transition hover:bg-emeraldDark-50 sm:w-auto"
                     >
                       <X className="h-4 w-4" aria-hidden />
-                      Cancel
+                      {t.upcoming.cancel}
                     </button>
                   </div>
                 </form>
@@ -565,7 +573,7 @@ export default function UpcomingEventsSection() {
               <div className="mt-7 border-t border-emeraldDark-900/5 pt-5">
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-semibold text-emeraldDark-900">
-                    Families attending
+                    {t.upcoming.familiesHeading}
                   </p>
                   {listError && (
                     <button
@@ -573,7 +581,7 @@ export default function UpcomingEventsSection() {
                       onClick={() => refresh()}
                       className="text-xs font-semibold text-red-600 underline-offset-2 hover:underline"
                     >
-                      Retry
+                      {t.upcoming.retry}
                     </button>
                   )}
                 </div>
@@ -597,12 +605,12 @@ export default function UpcomingEventsSection() {
 
                 {!listError && !loading && rsvps.length === 0 && (
                   <p className="mt-3 rounded-xl bg-emeraldDark-50/60 px-4 py-5 text-center text-sm text-emeraldDark-800">
-                    No one has RSVP&apos;d yet — be the first!
+                    {t.upcoming.emptyList}
                   </p>
                 )}
 
                 {!listError && !loading && rsvps.length > 0 && (
-                  <ul className="mt-3 max-h-72 space-y-2 overflow-y-auto pr-1">
+                  <ul className="mt-3 max-h-72 space-y-2 overflow-y-auto pe-1">
                     {rsvps.map((r) => {
                       const isMine = r.id === myRsvpId;
                       return (
@@ -621,13 +629,15 @@ export default function UpcomingEventsSection() {
                               <span className="truncate">{r.name}</span>
                               {isMine && (
                                 <span className="shrink-0 rounded-full bg-emeraldDark-700 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">
-                                  You
+                                  {t.upcoming.youBadge}
                                 </span>
                               )}
                             </p>
                             <p className="text-xs text-gray-500">
                               {r.count}{" "}
-                              {r.count === 1 ? "person" : "people"}
+                              {r.count === 1
+                                ? t.upcoming.personOne
+                                : t.upcoming.personMany}
                             </p>
                           </div>
                           <div className="flex items-center gap-2">
@@ -639,7 +649,9 @@ export default function UpcomingEventsSection() {
                                 type="button"
                                 onClick={() => handleRemove(r)}
                                 disabled={removingId === r.id}
-                                aria-label={`Remove ${r.name}'s RSVP`}
+                                aria-label={tpl(t.upcoming.removeAria, {
+                                  name: r.name,
+                                })}
                                 className="inline-flex h-8 w-8 items-center justify-center rounded-full text-gray-400 transition hover:bg-red-50 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-red-300 disabled:opacity-50"
                               >
                                 {removingId === r.id ? (
@@ -659,7 +671,7 @@ export default function UpcomingEventsSection() {
                 {!listError && !loading && rsvps.length > 0 && (
                   <div className="mt-4 flex items-center justify-between rounded-xl bg-gradient-to-br from-emeraldDark-900 to-emeraldDark-800 px-4 py-3 text-white">
                     <span className="text-xs font-semibold uppercase tracking-widest text-gold-300">
-                      Total people coming
+                      {t.upcoming.grandTotal}
                     </span>
                     <span className="font-display text-xl font-bold text-white">
                       {total}
@@ -674,13 +686,13 @@ export default function UpcomingEventsSection() {
                   <div className="flex items-center justify-between gap-2">
                     <p className="flex items-center gap-2 text-sm font-semibold text-emeraldDark-900">
                       <Lock className="h-4 w-4 text-emeraldDark-700" aria-hidden />
-                      Organizer Tools
+                      {t.upcoming.organizerToolsTitle}
                     </p>
                     {!isAdmin && (
                       <button
                         type="button"
                         onClick={() => setAdminPanelOpen(false)}
-                        aria-label="Close organizer panel"
+                        aria-label={t.upcoming.closeOrganizer}
                         className="rounded-full p-1 text-gray-400 hover:bg-emeraldDark-50 hover:text-emeraldDark-700"
                       >
                         <X className="h-4 w-4" />
@@ -701,8 +713,7 @@ export default function UpcomingEventsSection() {
                         </p>
                       )}
                       <p className="text-xs text-emeraldDark-800">
-                        Trash icons are visible next to each RSVP. Removing a
-                        family also unlocks their device so they can RSVP again.
+                        {t.upcoming.organizerLoggedInText}
                       </p>
                       <button
                         type="button"
@@ -710,7 +721,7 @@ export default function UpcomingEventsSection() {
                         className="inline-flex items-center gap-2 rounded-full border border-emeraldDark-900/10 bg-white px-4 py-2 text-xs font-semibold text-emeraldDark-900 transition hover:bg-emeraldDark-50"
                       >
                         <LogOut className="h-3.5 w-3.5" aria-hidden />
-                        Log out of organizer mode
+                        {t.upcoming.organizerLogout}
                       </button>
                     </div>
                   ) : (
@@ -722,12 +733,12 @@ export default function UpcomingEventsSection() {
                         htmlFor="admin-pw"
                         className="block text-xs font-medium text-emeraldDark-800"
                       >
-                        Enter organizer password
+                        {t.upcoming.organizerPasswordLabel}
                       </label>
                       <div className="flex gap-2">
                         <div className="relative flex-1">
                           <KeyRound
-                            className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
+                            className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
                             aria-hidden
                           />
                           <input
@@ -735,8 +746,8 @@ export default function UpcomingEventsSection() {
                             type="password"
                             value={adminInput}
                             onChange={(e) => setAdminInput(e.target.value)}
-                            placeholder="Password"
-                            className="w-full rounded-xl border border-emeraldDark-900/10 bg-white px-3 py-2 pl-9 text-sm text-emeraldDark-900 focus:border-gold-500 focus:outline-none focus:ring-2 focus:ring-gold-500/30"
+                            placeholder={t.upcoming.organizerPasswordPlaceholder}
+                            className="w-full rounded-xl border border-emeraldDark-900/10 bg-white px-3 py-2 ps-9 text-sm text-emeraldDark-900 focus:border-gold-500 focus:outline-none focus:ring-2 focus:ring-gold-500/30"
                           />
                         </div>
                         <button
@@ -749,7 +760,7 @@ export default function UpcomingEventsSection() {
                           ) : (
                             <ShieldCheck className="h-3.5 w-3.5" />
                           )}
-                          Log in
+                          {t.upcoming.organizerLogin}
                         </button>
                       </div>
                       {adminError && (
@@ -764,8 +775,8 @@ export default function UpcomingEventsSection() {
 
               <p className="mt-5 text-[11px] leading-relaxed text-gray-400">
                 {RSVP_ENABLED
-                  ? "Each device can RSVP once. Only the event organizer can remove an entry."
-                  : "RSVPs are currently disabled. Please call to reserve."}
+                  ? t.upcoming.footerEnabled
+                  : t.upcoming.footerDisabled}
               </p>
             </div>
           </div>

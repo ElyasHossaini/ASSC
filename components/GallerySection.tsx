@@ -9,6 +9,7 @@ import {
   Maximize2,
 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useLanguage } from "./LanguageProvider";
 
 type GalleryItem = {
   src: string;
@@ -112,7 +113,14 @@ const ITEMS: GalleryItem[] = [...FEATURED, ...RECENT];
 
 const INITIAL_COUNT = 12;
 
+function tpl(str: string, vars: Record<string, string | number>) {
+  return str.replace(/\{\{(\w+)\}\}/g, (_, k) =>
+    vars[k] !== undefined ? String(vars[k]) : `{{${k}}}`
+  );
+}
+
 export default function GallerySection() {
+  const { t } = useLanguage();
   const [showAll, setShowAll] = useState(false);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const touchStartX = useRef<number | null>(null);
@@ -179,15 +187,14 @@ export default function GallerySection() {
         <div className="mx-auto max-w-3xl text-center">
           <p className="section-eyebrow mx-auto">
             <span className="h-1.5 w-1.5 rounded-full bg-gold-500" />
-            Our Gallery
+            {t.gallery.eyebrow}
           </p>
           <h2 className="section-heading">
-            Moments from our{" "}
-            <span className="text-gold-600">community</span>
+            {t.gallery.headingA}{" "}
+            <span className="text-gold-600">{t.gallery.headingB}</span>
           </h2>
           <p className="mt-5 text-base leading-relaxed text-gray-600 sm:text-lg">
-            A glimpse into our gatherings, events, and the people who make
-            the Afghanistan Shia Society of Calgary a true community home.
+            {t.gallery.intro}
           </p>
           <div className="divider-pattern mt-8">
             <Camera className="h-4 w-4" aria-hidden />
@@ -200,7 +207,7 @@ export default function GallerySection() {
               key={item.src}
               type="button"
               onClick={() => setOpenIndex(i)}
-              aria-label={`Open photo ${i + 1} of ${total}`}
+              aria-label={tpl(t.gallery.openPhoto, { i: i + 1, total })}
               className="group relative aspect-[4/5] overflow-hidden rounded-2xl bg-emeraldDark-50/50 shadow-soft ring-1 ring-emeraldDark-900/5 transition-all duration-300 hover:-translate-y-1 hover:shadow-elegant focus:outline-none focus:ring-2 focus:ring-gold-500 focus:ring-offset-2"
             >
               <Image
@@ -216,7 +223,7 @@ export default function GallerySection() {
               />
               <span
                 aria-hidden
-                className="pointer-events-none absolute bottom-3 right-3 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-emeraldDark-900 opacity-0 shadow-soft backdrop-blur transition-all duration-300 group-hover:opacity-100"
+                className="pointer-events-none absolute bottom-3 end-3 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-emeraldDark-900 opacity-0 shadow-soft backdrop-blur transition-all duration-300 group-hover:opacity-100"
               >
                 <Maximize2 className="h-4 w-4" />
               </span>
@@ -232,12 +239,14 @@ export default function GallerySection() {
               className="btn-secondary"
             >
               {showAll
-                ? "Show fewer photos"
-                : `View all ${total} photos`}
+                ? t.gallery.showFewer
+                : tpl(t.gallery.viewAll, { n: total })}
             </button>
             <p className="text-xs uppercase tracking-widest text-gray-500">
-              {showAll ? total : Math.min(INITIAL_COUNT, total)} of {total}{" "}
-              shown
+              {tpl(t.gallery.shownOf, {
+                shown: showAll ? total : Math.min(INITIAL_COUNT, total),
+                total,
+              })}
             </p>
           </div>
         )}
@@ -247,17 +256,18 @@ export default function GallerySection() {
         <div
           role="dialog"
           aria-modal="true"
-          aria-label="Photo viewer"
+          aria-label={t.gallery.photoViewer}
           className="fixed inset-0 z-[100] flex items-center justify-center bg-emeraldDark-950/95 backdrop-blur-sm animate-fade-in"
           onClick={close}
           onTouchStart={onTouchStart}
           onTouchMove={onTouchMove}
           onTouchEnd={onTouchEnd}
+          dir="ltr"
         >
           <button
             type="button"
             onClick={close}
-            aria-label="Close photo viewer"
+            aria-label={t.gallery.closeViewer}
             className="absolute right-4 top-4 z-10 inline-flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white ring-1 ring-white/20 backdrop-blur transition-all hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-gold-400 sm:right-6 sm:top-6"
           >
             <X className="h-5 w-5" />
@@ -273,7 +283,7 @@ export default function GallerySection() {
               e.stopPropagation();
               prev();
             }}
-            aria-label="Previous photo"
+            aria-label={t.gallery.prev}
             className="absolute left-2 top-1/2 z-10 inline-flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white ring-1 ring-white/20 backdrop-blur transition-all hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-gold-400 sm:left-6 sm:h-14 sm:w-14"
           >
             <ChevronLeft className="h-6 w-6" />
@@ -285,7 +295,7 @@ export default function GallerySection() {
               e.stopPropagation();
               next();
             }}
-            aria-label="Next photo"
+            aria-label={t.gallery.next}
             className="absolute right-2 top-1/2 z-10 inline-flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white ring-1 ring-white/20 backdrop-blur transition-all hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-gold-400 sm:right-6 sm:h-14 sm:w-14"
           >
             <ChevronRight className="h-6 w-6" />

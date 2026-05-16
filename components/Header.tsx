@@ -5,10 +5,13 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Menu, X, Heart, Phone } from "lucide-react";
 import { NAV_LINKS, SITE } from "@/lib/site";
+import { useLanguage } from "./LanguageProvider";
+import { LanguageToggle } from "./LanguageToggle";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const { t } = useLanguage();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -45,6 +48,7 @@ export default function Header() {
               <a
                 href={SITE.phoneHref}
                 className="transition hover:text-gold-300"
+                dir="ltr"
               >
                 {SITE.phone}
               </a>
@@ -54,25 +58,29 @@ export default function Header() {
               <a
                 href={SITE.emailHref}
                 className="transition hover:text-gold-300"
+                dir="ltr"
               >
                 {SITE.email}
               </a>
             </span>
           </div>
-          <p className="font-arabic text-sm text-gold-300">
-            بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
-          </p>
+          <div className="flex items-center gap-4">
+            <LanguageToggle variant="dark" />
+            <p className="font-arabic text-sm text-gold-300">
+              بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
+            </p>
+          </div>
         </div>
       </div>
 
       <nav
         className="container-wide flex items-center justify-between py-3 lg:py-4"
-        aria-label="Main navigation"
+        aria-label={t.nav.mainNav}
       >
         <Link
           href="#home"
           className="group flex items-center gap-3"
-          aria-label={`${SITE.name} home`}
+          aria-label={`${SITE.name} ${t.nav.homeAria}`}
         >
           <div className="relative h-12 w-12 overflow-hidden rounded-full ring-2 ring-gold-400/60 ring-offset-2 ring-offset-white transition-all duration-300 group-hover:ring-gold-500 sm:h-14 sm:w-14">
             <Image
@@ -86,10 +94,10 @@ export default function Header() {
           </div>
           <div className="hidden sm:block">
             <p className="font-display text-base font-bold leading-tight text-emeraldDark-900 sm:text-lg">
-              Afghanistan Shia Society
+              {t.nav.siteFullName}
             </p>
             <p className="text-xs font-medium uppercase tracking-widest text-gold-600">
-              of Calgary
+              {t.nav.siteSubName}
             </p>
           </div>
         </Link>
@@ -101,26 +109,32 @@ export default function Header() {
               href={link.href}
               className="relative whitespace-nowrap rounded-full px-3 py-2 text-sm font-medium text-emeraldDark-900 transition-colors duration-200 hover:text-gold-600 xl:px-4"
             >
-              {link.label}
+              {t.nav[link.key]}
             </a>
           ))}
         </div>
 
         <div className="flex items-center gap-2">
+          <div className="hidden lg:block">
+            {/* Toggle is also in the top bar; keep this row tidy. Mobile gets its own below. */}
+          </div>
           <a
             href="#donations"
             className="hidden items-center gap-2 rounded-full bg-gradient-to-br from-gold-500 to-gold-600 px-5 py-2.5 text-sm font-semibold text-white shadow-soft transition-all duration-300 hover:shadow-glow md:inline-flex"
           >
             <Heart className="h-4 w-4" aria-hidden />
-            Donate
+            {t.nav.donate}
           </a>
+          <div className="lg:hidden">
+            <LanguageToggle variant="light" />
+          </div>
           <button
             type="button"
             className="inline-flex items-center justify-center rounded-full p-2 text-emeraldDark-900 transition-colors hover:bg-emeraldDark-50 lg:hidden"
             onClick={() => setOpen((v) => !v)}
             aria-expanded={open}
             aria-controls="mobile-menu"
-            aria-label={open ? "Close menu" : "Open menu"}
+            aria-label={open ? t.nav.closeMenu : t.nav.openMenu}
           >
             {open ? (
               <X className="h-6 w-6" aria-hidden />
@@ -145,7 +159,7 @@ export default function Header() {
                 onClick={() => setOpen(false)}
                 className="rounded-xl px-4 py-3 text-base font-medium text-emeraldDark-900 transition-colors hover:bg-emeraldDark-50 hover:text-gold-600"
               >
-                {link.label}
+                {t.nav[link.key]}
               </a>
             ))}
           </div>
@@ -155,7 +169,7 @@ export default function Header() {
               onClick={() => setOpen(false)}
               className="btn-primary w-full"
             >
-              Contact Us
+              {t.nav.contactUs}
             </a>
             <a
               href="#donations"
@@ -163,13 +177,14 @@ export default function Header() {
               className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-br from-gold-500 to-gold-600 px-5 py-3 text-sm font-semibold text-white shadow-soft"
             >
               <Heart className="h-4 w-4" aria-hidden />
-              Donate
+              {t.nav.donate}
             </a>
           </div>
           <div className="mt-4 space-y-1 border-t border-emeraldDark-900/5 pt-4 text-sm text-emeraldDark-700">
             <a
               href={SITE.phoneHref}
               className="flex items-center gap-2 py-1 hover:text-gold-600"
+              dir="ltr"
             >
               <Phone className="h-4 w-4 text-gold-500" aria-hidden />
               {SITE.phone}
@@ -177,6 +192,7 @@ export default function Header() {
             <a
               href={SITE.emailHref}
               className="block py-1 hover:text-gold-600"
+              dir="ltr"
             >
               {SITE.email}
             </a>

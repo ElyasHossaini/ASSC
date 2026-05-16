@@ -10,28 +10,15 @@ import {
   Check,
   Mail,
   Phone,
+  type LucideIcon,
 } from "lucide-react";
 import { SITE } from "@/lib/site";
+import { useLanguage } from "./LanguageProvider";
 
-const IMPACT = [
-  {
-    icon: BookOpenCheck,
-    title: "Religious Programs",
-    text: "Support daily worship, lectures, and majalis at our centre.",
-  },
-  {
-    icon: Users,
-    title: "Youth Education",
-    text: "Fund Quran classes, mentorship, and youth activities.",
-  },
-  {
-    icon: HandCoins,
-    title: "Community Services",
-    text: "Help with events, iftars, and ongoing community support.",
-  },
-];
+const IMPACT_ICONS: LucideIcon[] = [BookOpenCheck, Users, HandCoins];
 
 export default function DonationSection() {
+  const { t } = useLanguage();
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -64,32 +51,28 @@ export default function DonationSection() {
           <div className="lg:col-span-7">
             <p className="inline-flex items-center gap-2 rounded-full border border-gold-400/40 bg-white/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-gold-300 backdrop-blur">
               <Heart className="h-3.5 w-3.5" aria-hidden />
-              Support Our Community
+              {t.donations.eyebrow}
             </p>
             <h2 className="mt-4 font-display text-3xl font-bold tracking-tight text-white text-balance sm:text-4xl lg:text-5xl">
-              Support the Afghanistan{" "}
+              {t.donations.headingA}{" "}
               <span className="bg-gradient-to-r from-gold-300 to-gold-500 bg-clip-text text-transparent">
-                Shia Society of Calgary
+                {t.donations.headingB}
               </span>
             </h2>
             <p className="mt-6 max-w-2xl text-base leading-relaxed text-emeraldDark-100 sm:text-lg">
-              Your donations help support religious programs, youth education,
-              community events, and ongoing services for the community.
-              Together, we keep the doors of our centre open for prayer,
-              learning, and gathering.
+              {t.donations.intro}
             </p>
 
-            <p className="mt-4 font-arabic text-lg text-gold-300">
+            <p className="mt-4 font-arabic text-lg text-gold-300" dir="rtl">
               مَن ذَا ٱلَّذِى يُقْرِضُ ٱللَّهَ قَرْضًا حَسَنًا
             </p>
             <p className="text-sm text-emeraldDark-200/80">
-              &ldquo;Who is it that will lend to Allah a goodly loan?&rdquo;
-              — Holy Quran 2:245
+              {t.donations.quoteEn}
             </p>
 
             <div className="mt-10 space-y-4">
-              {IMPACT.map((item) => {
-                const Icon = item.icon;
+              {t.donations.items.map((item, i) => {
+                const Icon = IMPACT_ICONS[i] ?? BookOpenCheck;
                 return (
                   <div
                     key={item.title}
@@ -117,46 +100,47 @@ export default function DonationSection() {
             <div className="relative overflow-hidden rounded-3xl border border-gold-400/30 bg-white p-8 shadow-elegant">
               <div
                 aria-hidden
-                className="absolute -right-12 -top-12 h-48 w-48 rounded-full bg-gold-400/20 blur-3xl"
+                className="absolute -end-12 -top-12 h-48 w-48 rounded-full bg-gold-400/20 blur-3xl"
               />
               <div className="relative">
                 <div className="inline-flex items-center gap-2 rounded-full bg-emeraldDark-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-emeraldDark-800 ring-1 ring-emeraldDark-200">
                   <Heart className="h-3.5 w-3.5 text-gold-600" aria-hidden />
-                  Donate by Interac e-Transfer
+                  {t.donations.cardEyebrow}
                 </div>
 
                 <h3 className="mt-5 font-display text-2xl font-bold text-emeraldDark-900 sm:text-3xl">
-                  Send your donation via e-Transfer
+                  {t.donations.cardTitle}
                 </h3>
                 <p className="mt-3 text-sm leading-relaxed text-gray-600">
-                  We accept donations through Interac e-Transfer. Please send
-                  your contribution to the email address below from your
-                  online banking.
+                  {t.donations.cardIntro}
                 </p>
 
                 <div className="mt-6 rounded-2xl border border-emeraldDark-900/10 bg-gradient-to-br from-emeraldDark-50/60 to-gold-50/40 p-5">
                   <p className="text-xs font-semibold uppercase tracking-widest text-gold-700">
-                    Send e-Transfer to
+                    {t.donations.sendTo}
                   </p>
                   <div className="mt-2 flex items-center justify-between gap-3">
-                    <p className="break-all font-display text-lg font-semibold text-emeraldDark-900 sm:text-xl">
+                    <p
+                      className="break-all font-display text-lg font-semibold text-emeraldDark-900 sm:text-xl"
+                      dir="ltr"
+                    >
                       {SITE.email}
                     </p>
                     <button
                       type="button"
                       onClick={handleCopy}
                       className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-emeraldDark-900 px-3 py-2 text-xs font-semibold text-white shadow-soft transition hover:bg-emeraldDark-800"
-                      aria-label="Copy e-Transfer email address"
+                      aria-label={t.donations.copyAria}
                     >
                       {copied ? (
                         <>
                           <Check className="h-3.5 w-3.5" aria-hidden />
-                          Copied
+                          {t.donations.copied}
                         </>
                       ) : (
                         <>
                           <Copy className="h-3.5 w-3.5" aria-hidden />
-                          Copy
+                          {t.donations.copy}
                         </>
                       )}
                     </button>
@@ -165,20 +149,26 @@ export default function DonationSection() {
 
                 <ol className="mt-6 space-y-3 text-sm text-emeraldDark-900">
                   <Step n={1}>
-                    Sign in to your online banking and select{" "}
-                    <span className="font-semibold">Interac e-Transfer</span>.
+                    {t.donations.step1Pre}{" "}
+                    <span className="font-semibold">
+                      {t.donations.step1Strong}
+                    </span>
+                    {t.donations.step1Post}
                   </Step>
                   <Step n={2}>
-                    Send your donation to{" "}
-                    <span className="font-semibold break-all">
+                    {t.donations.step2Pre}{" "}
+                    <span
+                      className="font-semibold break-all"
+                      dir="ltr"
+                    >
                       {SITE.email}
                     </span>
-                    .
+                    {t.donations.step2Post}
                   </Step>
                   <Step n={3}>
-                    Add a note like{" "}
-                    <span className="italic">&ldquo;Donation – ASSC&rdquo;</span>{" "}
-                    so we can track your contribution.
+                    {t.donations.step3Pre}{" "}
+                    <span className="italic">{t.donations.step3Italic}</span>
+                    {t.donations.step3Post}
                   </Step>
                 </ol>
 
@@ -188,20 +178,19 @@ export default function DonationSection() {
                     className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-br from-gold-500 to-gold-600 px-5 py-3 text-sm font-semibold text-white shadow-soft transition hover:shadow-glow"
                   >
                     <Mail className="h-4 w-4" aria-hidden />
-                    Email Us
+                    {t.donations.emailUs}
                   </a>
                   <a
                     href={SITE.phoneHref}
                     className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-emeraldDark-800 px-5 py-3 text-sm font-semibold text-emeraldDark-900 transition hover:bg-emeraldDark-800 hover:text-white"
                   >
                     <Phone className="h-4 w-4" aria-hidden />
-                    Call Us
+                    {t.donations.callUs}
                   </a>
                 </div>
 
                 <p className="mt-5 text-xs leading-relaxed text-gray-500">
-                  May Allah (s.w.t.) accept your generosity and reward you
-                  abundantly. Jazak Allahu Khairan.
+                  {t.donations.closing}
                 </p>
               </div>
             </div>

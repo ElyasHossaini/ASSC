@@ -1,3 +1,5 @@
+"use client";
+
 import {
   BookOpen,
   CalendarHeart,
@@ -7,60 +9,22 @@ import {
   Users,
   type LucideIcon,
 } from "lucide-react";
+import { useLanguage } from "./LanguageProvider";
 
-type Program = {
-  icon: LucideIcon;
-  title: string;
-  description: string;
-  accent: "emerald" | "royal" | "gold";
-};
+type Accent = "emerald" | "royal" | "gold";
 
-const PROGRAMS: Program[] = [
-  {
-    icon: CalendarHeart,
-    title: "Daily & Weekly Religious Programs",
-    description:
-      "Regular prayer programs, Dua sessions, and majalis held throughout the week to keep our community connected to worship and remembrance.",
-    accent: "emerald",
-  },
-  {
-    icon: BookOpen,
-    title: "Quran & Islamic Education",
-    description:
-      "Quran recitation, Tajweed, and Islamic studies classes for children, youth, and adults — taught by knowledgeable community members.",
-    accent: "gold",
-  },
-  {
-    icon: GraduationCap,
-    title: "Youth Programs",
-    description:
-      "Activities, mentorship, and Islamic learning designed to engage the next generation and help our youth grow rooted in their faith.",
-    accent: "royal",
-  },
-  {
-    icon: Users,
-    title: "Community Gatherings",
-    description:
-      "Family nights, dinners, and social events that strengthen friendships and bring families together in a welcoming environment.",
-    accent: "emerald",
-  },
-  {
-    icon: Moon,
-    title: "Muharram & Ramadan Programs",
-    description:
-      "Nightly majalis during Muharram and Safar, communal iftars in Ramadan, and special programs marking the holy months and Islamic occasions.",
-    accent: "gold",
-  },
-  {
-    icon: Sparkles,
-    title: "Family & Cultural Events",
-    description:
-      "Eid celebrations, Afghan cultural evenings, and family-friendly gatherings that honor our heritage and bring joy to all ages.",
-    accent: "royal",
-  },
+const ICONS: LucideIcon[] = [
+  CalendarHeart,
+  BookOpen,
+  GraduationCap,
+  Users,
+  Moon,
+  Sparkles,
 ];
 
-const ACCENT_STYLES: Record<Program["accent"], string> = {
+const ACCENTS: Accent[] = ["emerald", "gold", "royal", "emerald", "gold", "royal"];
+
+const ACCENT_STYLES: Record<Accent, string> = {
   emerald:
     "from-emeraldDark-50 to-emeraldDark-100 text-emeraldDark-800 ring-emeraldDark-200",
   royal: "from-royal-50 to-royal-100 text-royal-800 ring-royal-200",
@@ -68,6 +32,8 @@ const ACCENT_STYLES: Record<Program["accent"], string> = {
 };
 
 export default function ProgramsSection() {
+  const { t } = useLanguage();
+
   return (
     <section
       id="programs"
@@ -77,16 +43,14 @@ export default function ProgramsSection() {
         <div className="mx-auto max-w-3xl text-center">
           <p className="section-eyebrow mx-auto">
             <span className="h-1.5 w-1.5 rounded-full bg-gold-500" />
-            Our Programs
+            {t.programs.eyebrow}
           </p>
           <h2 className="section-heading">
-            Programs that nurture{" "}
-            <span className="text-gold-600">faith and community</span>.
+            {t.programs.headingA}{" "}
+            <span className="text-gold-600">{t.programs.headingB}</span>.
           </h2>
           <p className="mt-5 text-base leading-relaxed text-gray-600 sm:text-lg">
-            From weekly prayers and Quran classes to youth activities and
-            cultural gatherings, our programs are designed to serve every
-            member of the Afghan Shia community in Calgary.
+            {t.programs.intro}
           </p>
           <div className="divider-pattern mt-8">
             <Sparkles className="h-4 w-4" aria-hidden />
@@ -94,12 +58,13 @@ export default function ProgramsSection() {
         </div>
 
         <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {PROGRAMS.map((p) => {
-            const Icon = p.icon;
+          {t.programs.items.map((p, i) => {
+            const Icon = ICONS[i] ?? Sparkles;
+            const accent = ACCENTS[i] ?? "emerald";
             return (
               <article key={p.title} className="card group relative">
                 <div
-                  className={`mb-5 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${ACCENT_STYLES[p.accent]} ring-1 transition-transform duration-300 group-hover:scale-110`}
+                  className={`mb-5 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${ACCENT_STYLES[accent]} ring-1 transition-transform duration-300 group-hover:scale-110`}
                 >
                   <Icon className="h-7 w-7" aria-hidden />
                 </div>

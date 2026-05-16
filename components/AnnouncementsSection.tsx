@@ -1,35 +1,13 @@
-import { Bell, Clock, Megaphone, Star } from "lucide-react";
+"use client";
 
-const ANNOUNCEMENTS = [
-  {
-    icon: Megaphone,
-    tag: "Announcement",
-    title: "Welcome to the new ASSC website",
-    text: "Stay connected with the latest news, programs, and community updates from the Afghanistan Shia Society of Calgary.",
-  },
-  {
-    icon: Star,
-    tag: "Community",
-    title: "Volunteers and donations welcome",
-    text: "Help support our religious programs, youth education, and community events. Reach out to learn how you can contribute.",
-  },
-  {
-    icon: Bell,
-    tag: "Reminder",
-    title: "Holy month programs",
-    text: "Special nightly programs are held during Muharram, Safar, and Ramadan. Please contact us for the current schedule.",
-  },
-];
+import { Bell, Clock, Megaphone, Star, type LucideIcon } from "lucide-react";
+import { useLanguage } from "./LanguageProvider";
 
-const SCHEDULE = [
-  { label: "Friday Program", time: "Every Friday  ·  7:30 PM" },
-  { label: "Dua Kumayl", time: "Thursday Nights  ·  After Isha" },
-  { label: "Youth Quran Class", time: "Weekends  ·  TBA" },
-  { label: "Muharram Majlis", time: "Nightly  ·  After Maghrib" },
-  { label: "Ramadan Iftar", time: "Daily during Ramadan  ·  Sunset" },
-];
+const ANNOUNCEMENT_ICONS: LucideIcon[] = [Megaphone, Star, Bell];
 
 export default function AnnouncementsSection() {
+  const { t } = useLanguage();
+
   return (
     <section className="relative overflow-hidden bg-white py-20 sm:py-28">
       <div className="container-wide">
@@ -38,20 +16,21 @@ export default function AnnouncementsSection() {
           <div className="lg:col-span-2">
             <p className="section-eyebrow">
               <span className="h-1.5 w-1.5 rounded-full bg-gold-500" />
-              Notice Board
+              {t.announcements.eyebrow}
             </p>
             <h2 className="section-heading">
-              Announcements &amp;{" "}
-              <span className="text-gold-600">community updates</span>
+              {t.announcements.headingA}{" "}
+              <span className="text-gold-600">
+                {t.announcements.headingB}
+              </span>
             </h2>
             <p className="mt-4 max-w-2xl text-base leading-relaxed text-gray-600 sm:text-lg">
-              Important news, reminders, and updates from the Afghanistan
-              Shia Society of Calgary.
+              {t.announcements.intro}
             </p>
 
             <ul className="mt-10 space-y-5">
-              {ANNOUNCEMENTS.map((a) => {
-                const Icon = a.icon;
+              {t.announcements.items.map((a, i) => {
+                const Icon = ANNOUNCEMENT_ICONS[i] ?? Megaphone;
                 return (
                   <li
                     key={a.title}
@@ -89,18 +68,17 @@ export default function AnnouncementsSection() {
               <div className="relative">
                 <div className="inline-flex items-center gap-2 rounded-full border border-gold-400/30 bg-white/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-gold-300 backdrop-blur">
                   <Clock className="h-3.5 w-3.5" aria-hidden />
-                  Weekly Schedule
+                  {t.announcements.scheduleEyebrow}
                 </div>
                 <h3 className="mt-4 font-display text-2xl font-bold text-white">
-                  Program Schedule
+                  {t.announcements.scheduleTitle}
                 </h3>
                 <p className="mt-2 text-sm text-emeraldDark-100/90">
-                  A snapshot of regular programs at our centre. Please call
-                  ahead to confirm.
+                  {t.announcements.scheduleIntro}
                 </p>
 
                 <ul className="mt-6 space-y-3">
-                  {SCHEDULE.map((s) => (
+                  {t.announcements.schedule.map((s) => (
                     <li
                       key={s.label}
                       className="flex items-center justify-between gap-4 rounded-xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur transition hover:border-gold-400/40 hover:bg-white/10"
@@ -114,8 +92,7 @@ export default function AnnouncementsSection() {
                 </ul>
 
                 <p className="mt-6 rounded-xl border border-gold-400/30 bg-gold-400/10 px-4 py-3 text-xs leading-relaxed text-gold-100">
-                  Schedules may change during holy months. Please contact us
-                  for the latest program times.
+                  {t.announcements.scheduleNote}
                 </p>
               </div>
             </div>

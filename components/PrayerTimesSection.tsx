@@ -12,6 +12,7 @@ import {
   RefreshCw,
   type LucideIcon,
 } from "lucide-react";
+import { useLanguage } from "./LanguageProvider";
 
 type PrayerKey = "Fajr" | "Sunrise" | "Dhuhr" | "Asr" | "Maghrib" | "Isha";
 
@@ -41,56 +42,27 @@ type AladhanResponse = {
 
 type PrayerInfo = {
   key: PrayerKey;
-  label: string;
-  description: string;
+  /** Translation key used to look up label + description in t.prayer. */
+  labelKey: "fajr" | "sunrise" | "dhuhr" | "asr" | "maghrib" | "isha";
+  descKey:
+    | "fajrDesc"
+    | "sunriseDesc"
+    | "dhuhrDesc"
+    | "asrDesc"
+    | "maghribDesc"
+    | "ishaDesc";
   icon: LucideIcon;
   /** Counts toward "next prayer" countdown (Sunrise is informational only). */
   isObligatory: boolean;
 };
 
 const PRAYERS: PrayerInfo[] = [
-  {
-    key: "Fajr",
-    label: "Fajr",
-    description: "Dawn",
-    icon: MoonStar,
-    isObligatory: true,
-  },
-  {
-    key: "Sunrise",
-    label: "Sunrise",
-    description: "Fajr ends",
-    icon: Sunrise,
-    isObligatory: false,
-  },
-  {
-    key: "Dhuhr",
-    label: "Dhuhr",
-    description: "Midday",
-    icon: Sun,
-    isObligatory: true,
-  },
-  {
-    key: "Asr",
-    label: "Asr",
-    description: "Afternoon",
-    icon: Sun,
-    isObligatory: true,
-  },
-  {
-    key: "Maghrib",
-    label: "Maghrib",
-    description: "Evening",
-    icon: Sunset,
-    isObligatory: true,
-  },
-  {
-    key: "Isha",
-    label: "Isha",
-    description: "Night",
-    icon: Star,
-    isObligatory: true,
-  },
+  { key: "Fajr", labelKey: "fajr", descKey: "fajrDesc", icon: MoonStar, isObligatory: true },
+  { key: "Sunrise", labelKey: "sunrise", descKey: "sunriseDesc", icon: Sunrise, isObligatory: false },
+  { key: "Dhuhr", labelKey: "dhuhr", descKey: "dhuhrDesc", icon: Sun, isObligatory: true },
+  { key: "Asr", labelKey: "asr", descKey: "asrDesc", icon: Sun, isObligatory: true },
+  { key: "Maghrib", labelKey: "maghrib", descKey: "maghribDesc", icon: Sunset, isObligatory: true },
+  { key: "Isha", labelKey: "isha", descKey: "ishaDesc", icon: Star, isObligatory: true },
 ];
 
 function cleanTime(t: string | undefined): string | null {
@@ -124,6 +96,7 @@ function cacheKey(): string {
 }
 
 export default function PrayerTimesSection() {
+  const { t } = useLanguage();
   const [data, setData] = useState<AladhanResponse["data"] | null>(null);
   const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
   const [now, setNow] = useState<Date>(new Date());
@@ -247,17 +220,16 @@ export default function PrayerTimesSection() {
         <div className="mx-auto max-w-3xl text-center">
           <p className="inline-flex items-center gap-2 rounded-full border border-gold-400/40 bg-white/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-gold-300 backdrop-blur">
             <Clock className="h-3.5 w-3.5" aria-hidden />
-            Prayer Times
+            {t.prayer.eyebrow}
           </p>
           <h2 className="mt-4 font-display text-3xl font-bold tracking-tight text-white text-balance sm:text-4xl lg:text-5xl">
-            Today&apos;s Prayer{" "}
+            {t.prayer.headingA}{" "}
             <span className="bg-gradient-to-r from-gold-300 to-gold-500 bg-clip-text text-transparent">
-              Schedule
+              {t.prayer.headingB}
             </span>
           </h2>
           <p className="mt-4 text-base leading-relaxed text-emeraldDark-100 sm:text-lg">
-            Live prayer times for Calgary using the Shia Ithna-Ashari (Jafari)
-            calculation method.
+            {t.prayer.intro}
           </p>
 
           {status === "ready" && data && (
@@ -267,20 +239,24 @@ export default function PrayerTimesSection() {
                   className="h-4 w-4 text-gold-400"
                   aria-hidden
                 />
-                Calgary, Alberta
+                {t.prayer.cityLabel}
               </span>
               <span className="hidden h-4 w-px bg-white/20 sm:block" />
               <span>
-                <span className="text-emeraldDark-200">Gregorian:</span>{" "}
-                <span className="font-medium text-white">
+                <span className="text-emeraldDark-200">
+                  {t.prayer.gregorian}:
+                </span>{" "}
+                <span className="font-medium text-white" dir="ltr">
                   {data.date.gregorian.weekday.en},{" "}
                   {data.date.readable}
                 </span>
               </span>
               <span className="hidden h-4 w-px bg-white/20 sm:block" />
               <span>
-                <span className="text-emeraldDark-200">Hijri:</span>{" "}
-                <span className="font-medium text-gold-300">
+                <span className="text-emeraldDark-200">
+                  {t.prayer.hijri}:
+                </span>{" "}
+                <span className="font-medium text-gold-300" dir="ltr">
                   {data.date.hijri.day} {data.date.hijri.month.en}{" "}
                   {data.date.hijri.year} AH
                 </span>
@@ -292,18 +268,23 @@ export default function PrayerTimesSection() {
         {/* Next prayer hero card */}
         <div className="mx-auto mt-12 max-w-3xl">
           {status === "loading" && <LoadingHero />}
-          {status === "error" && <ErrorHero />}
+          {status === "error" && (
+            <ErrorHero
+              title={t.prayer.errorTitle}
+              body={t.prayer.errorBody}
+            />
+          )}
           {status === "ready" && computed && (
             <div className="relative overflow-hidden rounded-3xl border border-gold-400/40 bg-gradient-to-br from-white/10 via-white/5 to-transparent p-8 backdrop-blur-md shadow-elegant">
               <div
                 aria-hidden
                 className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-gold-400/20 blur-3xl"
               />
-              <div className="relative flex flex-col items-center justify-between gap-6 sm:flex-row sm:gap-8 sm:text-left">
-                <div className="text-center sm:text-left">
+              <div className="relative flex flex-col items-center justify-between gap-6 sm:flex-row sm:gap-8 sm:text-start">
+                <div className="text-center sm:text-start">
                   <p className="text-xs font-semibold uppercase tracking-widest text-gold-300">
-                    Up Next
-                    {computed.nextPrayer.isTomorrow && " · Tomorrow"}
+                    {t.prayer.upNext}
+                    {computed.nextPrayer.isTomorrow && t.prayer.tomorrowSuffix}
                   </p>
                   <div className="mt-2 flex items-center justify-center gap-3 sm:justify-start">
                     <computed.nextPrayer.icon
@@ -311,39 +292,45 @@ export default function PrayerTimesSection() {
                       aria-hidden
                     />
                     <p className="font-display text-3xl font-bold text-white sm:text-4xl">
-                      {computed.nextPrayer.label}
+                      {t.prayer[computed.nextPrayer.labelKey]}
                     </p>
                   </div>
                   <p className="mt-1 text-sm text-emeraldDark-100/85">
-                    at{" "}
-                    <span className="font-semibold text-white">
+                    {t.prayer.at}{" "}
+                    <span
+                      className="font-semibold text-white"
+                      dir="ltr"
+                    >
                       {format12h(computed.nextPrayer.time24)}
                     </span>
                   </p>
                 </div>
 
-                <div className="text-center sm:text-right">
+                <div className="text-center sm:text-end">
                   <p className="text-xs font-semibold uppercase tracking-widest text-gold-300">
-                    In
+                    {t.prayer.inLabel}
                   </p>
                   <p className="mt-1 font-display text-4xl font-bold tabular-nums text-white sm:text-5xl">
                     {computed.hours > 0 && (
                       <>
                         {computed.hours}
-                        <span className="ml-1 text-xl font-medium text-emeraldDark-100">
-                          hr
+                        <span className="ms-1 text-xl font-medium text-emeraldDark-100">
+                          {t.prayer.hr}
                         </span>{" "}
                       </>
                     )}
                     {computed.minutes}
-                    <span className="ml-1 text-xl font-medium text-emeraldDark-100">
-                      min
+                    <span className="ms-1 text-xl font-medium text-emeraldDark-100">
+                      {t.prayer.min}
                     </span>
                   </p>
                   {computed.currentPrayer && (
                     <p className="mt-1 text-xs text-emeraldDark-100/80">
-                      Current: {computed.currentPrayer.label} ·{" "}
-                      {format12h(computed.currentPrayer.time24)}
+                      {t.prayer.current}:{" "}
+                      {t.prayer[computed.currentPrayer.labelKey]} ·{" "}
+                      <span dir="ltr">
+                        {format12h(computed.currentPrayer.time24)}
+                      </span>
                     </p>
                   )}
                 </div>
@@ -375,13 +362,13 @@ export default function PrayerTimesSection() {
                 }`}
               >
                 {isNext && (
-                  <span className="absolute right-2 top-2 rounded-full bg-gold-500 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-white shadow-soft">
-                    Next
+                  <span className="absolute end-2 top-2 rounded-full bg-gold-500 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-white shadow-soft">
+                    {t.prayer.next}
                   </span>
                 )}
                 {isCurrent && !isNext && (
-                  <span className="absolute right-2 top-2 rounded-full bg-emeraldDark-400/30 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-gold-200">
-                    Now
+                  <span className="absolute end-2 top-2 rounded-full bg-emeraldDark-400/30 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-gold-200">
+                    {t.prayer.now}
                   </span>
                 )}
                 <Icon
@@ -391,15 +378,16 @@ export default function PrayerTimesSection() {
                   aria-hidden
                 />
                 <p className="mt-3 font-display text-base font-semibold text-white sm:text-lg">
-                  {p.label}
+                  {t.prayer[p.labelKey]}
                 </p>
                 <p className="mt-0.5 text-[11px] uppercase tracking-wider text-emeraldDark-200/80">
-                  {p.description}
+                  {t.prayer[p.descKey]}
                 </p>
                 <p
                   className={`mt-3 font-display text-lg font-bold tabular-nums sm:text-xl ${
                     isNext ? "text-gold-200" : "text-white"
                   }`}
+                  dir="ltr"
                 >
                   {status === "loading" ? (
                     <span className="inline-block h-5 w-16 animate-pulse rounded bg-white/10" />
@@ -414,16 +402,16 @@ export default function PrayerTimesSection() {
 
         <div className="mx-auto mt-8 flex max-w-3xl flex-col items-center gap-2 text-center text-xs text-emeraldDark-200/80 sm:flex-row sm:justify-center sm:gap-6">
           <p>
-            Times calculated using the{" "}
+            {t.prayer.footer1A}{" "}
             <span className="font-semibold text-gold-300">
-              Shia Ithna-Ashari (Jafari)
+              {t.prayer.footer1B}
             </span>{" "}
-            method.
+            {t.prayer.footer1C}
           </p>
           <span className="hidden h-3 w-px bg-white/15 sm:block" />
           <p className="inline-flex items-center gap-1.5">
             <RefreshCw className="h-3 w-3" aria-hidden />
-            Auto-updates daily · Live countdown
+            {t.prayer.footer2}
           </p>
         </div>
       </div>
@@ -449,16 +437,11 @@ function LoadingHero() {
   );
 }
 
-function ErrorHero() {
+function ErrorHero({ title, body }: { title: string; body: string }) {
   return (
     <div className="rounded-3xl border border-gold-400/30 bg-gold-400/10 p-6 text-center text-sm text-gold-100">
-      <p className="font-semibold text-gold-200">
-        Couldn&apos;t load live prayer times right now.
-      </p>
-      <p className="mt-1 text-gold-100/80">
-        Please refresh the page in a moment, or contact the centre for
-        today&apos;s schedule.
-      </p>
+      <p className="font-semibold text-gold-200">{title}</p>
+      <p className="mt-1 text-gold-100/80">{body}</p>
     </div>
   );
 }

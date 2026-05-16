@@ -1,8 +1,13 @@
+"use client";
+
 import Image from "next/image";
 import { ArrowRight, MapPin, MoonStar } from "lucide-react";
 import { SITE } from "@/lib/site";
+import { useLanguage } from "./LanguageProvider";
 
 export default function Hero() {
+  const { t, lang } = useLanguage();
+
   return (
     <section
       id="home"
@@ -37,33 +42,35 @@ export default function Hero() {
           <div className="lg:col-span-7">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-gold-400/40 bg-white/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-gold-300 backdrop-blur">
               <MoonStar className="h-3.5 w-3.5" aria-hidden />
-              Welcome to ASSC
+              {t.hero.welcome}
             </div>
 
             <h1 className="font-display text-4xl font-bold leading-tight text-balance sm:text-5xl lg:text-6xl xl:text-7xl">
-              Afghanistan{" "}
+              {t.hero.titleA}{" "}
               <span className="bg-gradient-to-r from-gold-300 via-gold-400 to-gold-500 bg-clip-text text-transparent">
-                Shia Society
+                {t.hero.titleB}
               </span>{" "}
-              of Calgary
+              {t.hero.titleC}
             </h1>
 
             <p className="mt-6 max-w-2xl text-lg leading-relaxed text-emeraldDark-100 sm:text-xl">
-              {SITE.tagline}
+              {t.hero.tagline}
             </p>
 
             <p className="mt-3 max-w-2xl text-base text-emeraldDark-200/80">
-              A place to pray, learn, and connect — rooted in faith, family,
-              and the rich Afghan Islamic tradition.
+              {t.hero.secondary}
             </p>
 
             <div className="mt-10 flex flex-wrap items-center gap-4">
               <a href="#programs" className="btn-secondary">
-                View Programs
-                <ArrowRight className="h-4 w-4" aria-hidden />
+                {t.hero.viewPrograms}
+                <ArrowRight
+                  className="h-4 w-4 rtl:rotate-180"
+                  aria-hidden
+                />
               </a>
               <a href="#contact" className="btn-outline-white">
-                Contact Us
+                {t.hero.contactUs}
               </a>
             </div>
 
@@ -76,6 +83,7 @@ export default function Hero() {
               <a
                 href={SITE.phoneHref}
                 className="font-medium transition hover:text-gold-300"
+                dir="ltr"
               >
                 {SITE.phone}
               </a>
@@ -105,11 +113,13 @@ export default function Hero() {
                   <p className="mt-6 font-arabic text-2xl text-gold-300">
                     أَهْلًا وَسَهْلًا
                   </p>
-                  <p className="mt-2 font-display text-xl font-semibold text-white">
-                    Welcome, Brothers &amp; Sisters
+                  <p
+                    className={`mt-2 ${lang === "fa" ? "font-farsi" : "font-display"} text-xl font-semibold text-white`}
+                  >
+                    {t.hero.welcomeCardTitle}
                   </p>
                   <p className="mt-1 text-sm text-emeraldDark-100/80">
-                    A community built on faith, knowledge &amp; service.
+                    {t.hero.welcomeCardSub}
                   </p>
                 </div>
               </div>
