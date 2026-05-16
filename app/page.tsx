@@ -8,6 +8,7 @@ import EventsSection from "@/components/EventsSection";
 import AnnouncementsSection from "@/components/AnnouncementsSection";
 import GallerySection from "@/components/GallerySection";
 import DonationSection from "@/components/DonationSection";
+import MembershipSection from "@/components/MembershipSection";
 import NewsletterSection from "@/components/NewsletterSection";
 import Footer from "@/components/Footer";
 
@@ -25,6 +26,7 @@ export default function HomePage() {
         <AnnouncementsSection />
         <GallerySection />
         <DonationSection />
+        <MembershipSection />
         <NewsletterSection />
       </main>
       <Footer />

@@ -23,6 +23,7 @@ const en = {
     weeklyEvents: "Weekly Events",
     gallery: "Gallery",
     donations: "Donations",
+    membership: "Membership",
     contact: "Contact",
     donate: "Donate",
     contactUs: "Contact Us",
@@ -162,11 +163,25 @@ const en = {
     headingB: "next gathering",
     intro:
       "Let us know how many family members will be joining so we can prepare a warm welcome for everyone.",
-    eventTitle: "Upcoming Community Event",
-    eventDate: "Coming Soon",
-    eventLocation: "ASSC Centre",
+    eventTitle: "Birth Anniversary of Imam Hassan al-Mujtaba (a.s.)",
+    eventDate: "Friday, March 14 · 6:00 PM",
+    eventTime: "From 6:00 PM (18:00)",
+    eventLocation: "Markaz-e Tawhid Calgary",
     eventDescription:
-      "Join us for our next community gathering. Reserve your spot below so we can prepare enough food and seating for your family.",
+      "Congratulations on the blessed birth anniversary of Imam Hassan al-Mujtaba (a.s.). We warmly invite you, dear friends, to join us at the iftar table of the Karim of Ahlul Bayt, Imam Hassan al-Mujtaba (a.s.), at Markaz-e Tawhid Calgary. Please RSVP below so we can welcome you and your family properly. We look forward to seeing you.",
+    poemLine1: "The blessed mid-month carries great honor tonight,",
+    poemLine2: "For God shows grace upon His servants tonight.",
+    poemLine3: "The celebration of Hassan's (a.s.) birth fills the highest heavens,",
+    poemLine4: "And so tonight resembles Laylat al-Isra.",
+    programTitle: "Program includes",
+    programItems: [
+      "Quran recitation (Juz reading)",
+      "Lecture by Dr. Shams (first session)",
+      "Iftar and dinner",
+      "Financial report",
+      "Performance by the Nur al-Mahdi choir group",
+    ],
+    fromOrganizer: "From Markaz-e Tawhid Calgary",
     totalAttending: "Total Attending",
     familyOne: "family",
     familyMany: "families",
@@ -415,6 +430,31 @@ const en = {
         "We couldn't submit your information. Please try again or email us directly.",
     },
   },
+  membership: {
+    eyebrow: "Become a Member",
+    headingA: "Join the Afghanistan Shia",
+    headingB: "Society of Calgary",
+    intro:
+      "We welcome members from across our community. Membership helps us strengthen our programs, support one another, and grow the centre that serves all of us.",
+    description:
+      "If you would like to become a member of the Afghanistan Shia Society of Calgary, please download the membership application form, fill it out completely, and email the completed form to us. Our committee will review your application and reach out to confirm your membership.",
+    step1Title: "Download the form",
+    step1Text:
+      "Save the PDF membership application form to your phone or computer.",
+    step2Title: "Fill it out",
+    step2Text:
+      "Complete every section of the form with your details — print and sign by hand, or fill it digitally.",
+    step3Title: "Email it to us",
+    step3Text:
+      "Send the completed form to the email address below. We'll review and follow up with next steps.",
+    downloadButton: "Download Application Form (PDF)",
+    sendTo: "Send the completed form to",
+    fileLabel: "PDF · ASAC Membership Application",
+    questionsPre: "Questions? Call us at",
+    questionsPost: "or email us anytime.",
+    closing:
+      "We look forward to welcoming you to our community. Jazak Allahu Khairan.",
+  },
   footer: {
     description:
       "A welcoming Afghan Shia Muslim community in Calgary — serving through worship, education, culture, and community support.",
@@ -447,6 +487,7 @@ const fa: typeof en = {
     weeklyEvents: "برنامه‌های هفتگی",
     gallery: "گالری",
     donations: "کمک‌های مالی",
+    membership: "عضویت",
     contact: "تماس",
     donate: "کمک مالی",
     contactUs: "تماس با ما",
@@ -586,11 +627,25 @@ const fa: typeof en = {
     headingB: "گردهمایی بعدی ما رزرو کنید",
     intro:
       "به ما بگویید چند نفر از اعضای خانواده‌تان همراه شما خواهند بود تا پذیرایی گرمی برای همه آماده کنیم.",
-    eventTitle: "رویداد اجتماعی پیش‌رو",
-    eventDate: "به‌زودی",
-    eventLocation: "مرکز ASSC",
+    eventTitle: "جشن میلاد امام حسن مجتبی (ع)",
+    eventDate: "جمعه ۱۴ مارچ · ساعت ۱۸",
+    eventTime: "از ساعت ۱۸",
+    eventLocation: "مرکز توحید کلگری",
     eventDescription:
-      "در گردهمایی بعدی جامعه‌مان به ما بپیوندید. لطفاً جای خود را ثبت کنید تا غذا و صندلی کافی برای خانوادهٔ شما آماده کنیم.",
+      "پیشاپیش سالروز میلاد امام حسن مجتبی (ع) مبارک باد. بدینوسیله از شما عزیزان دعوت می‌کنیم تا مهمان سفرهٔ افطار کریم اهل بیت، امام حسن مجتبی (ع)، در مرکز توحید کلگری باشید. لطفاً جهت هماهنگی بهتر با تکمیل فرم زیر، ما را از حضور گرمتان با خبر کنید. مشتاق دیدار شما هستیم.",
+    poemLine1: "نیمه ماه مبارک بس شرافت دارد امشب",
+    poemLine2: "چون خدا بر بندگان خود عنایت دارد امشب",
+    poemLine3: "جشن میلاد حسن(ع) در عرش اعلا گشته بر پا",
+    poemLine4: "زین سبب بر لیلة الاسرا شباهت دارد امشب",
+    programTitle: "برنامه شامل",
+    programItems: [
+      "جزء‌خوانی قرآن",
+      "سخنرانی توسط دکتر شمس (جلسه اول)",
+      "افطار و شام",
+      "گزارش مالی",
+      "اجرای گروه سرود نورالمهدی",
+    ],
+    fromOrganizer: "از طرف مرکز توحید کلگری",
     totalAttending: "مجموع شرکت‌کنندگان",
     familyOne: "خانواده",
     familyMany: "خانواده",
@@ -844,6 +899,31 @@ const fa: typeof en = {
       submit:
         "اطلاعات شما ثبت نشد. لطفاً دوباره تلاش کنید یا مستقیماً ایمیل بزنید.",
     },
+  },
+  membership: {
+    eyebrow: "عضویت در انجمن",
+    headingA: "به انجمن شیعیان",
+    headingB: "افغانستان کلگری بپیوندید",
+    intro:
+      "از اعضای جامعه برای پیوستن به انجمن استقبال می‌کنیم. عضویت شما به تقویت برنامه‌ها، حمایت متقابل و رشد مرکزی که در خدمت همهٔ ماست کمک می‌کند.",
+    description:
+      "اگر مایل به عضویت در انجمن شیعیان افغانستان کلگری هستید، لطفاً فرم درخواست عضویت را دانلود کنید، آن را به‌طور کامل تکمیل کنید و فرم پر شده را به ایمیل ما ارسال کنید. کمیتهٔ ما درخواست شما را بررسی کرده و برای تأیید عضویت با شما تماس خواهد گرفت.",
+    step1Title: "فرم را دانلود کنید",
+    step1Text:
+      "فایل PDF فرم درخواست عضویت را در گوشی یا رایانهٔ خود ذخیره کنید.",
+    step2Title: "فرم را تکمیل کنید",
+    step2Text:
+      "تمام بخش‌های فرم را با اطلاعات خود تکمیل کنید — می‌توانید چاپ و امضا کنید یا به‌صورت دیجیتال پر کنید.",
+    step3Title: "برای ما ایمیل کنید",
+    step3Text:
+      "فرم تکمیل‌شده را به آدرس ایمیل زیر ارسال کنید. ما بررسی کرده و مراحل بعدی را به شما اطلاع خواهیم داد.",
+    downloadButton: "دانلود فرم درخواست عضویت (PDF)",
+    sendTo: "فرم تکمیل‌شده را به این آدرس ارسال کنید",
+    fileLabel: "PDF · فرم درخواست عضویت ASAC",
+    questionsPre: "سؤالی دارید؟ با ما تماس بگیرید:",
+    questionsPost: "یا هر زمان ایمیل بزنید.",
+    closing:
+      "از پیوستن شما به جامعهٔ ما خرسند خواهیم شد. جزاکم الله خیراً.",
   },
   footer: {
     description:

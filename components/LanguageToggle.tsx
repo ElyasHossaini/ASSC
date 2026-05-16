@@ -26,6 +26,11 @@ export function LanguageToggle({ variant = "light", className = "" }: Props) {
       aria-label={t.meta.switchToOther}
       title={t.meta.switchToOther}
       className={`${base} ${skin} ${className}`}
+      // Some browser extensions (password managers, form fillers) inject
+      // attributes like `fdprocessedid` onto buttons before React hydrates,
+      // which triggers a hydration warning. This tells React to ignore
+      // attribute differences on this element only.
+      suppressHydrationWarning
     >
       <Languages className="h-3.5 w-3.5" aria-hidden />
       <span className={lang === "en" ? "" : "opacity-50"}>EN</span>

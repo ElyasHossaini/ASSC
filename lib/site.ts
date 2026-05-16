@@ -20,6 +20,7 @@ export const NAV_LINKS = [
   { key: "weeklyEvents", href: "#events" },
   { key: "gallery", href: "#gallery" },
   { key: "donations", href: "#donations" },
+  { key: "membership", href: "#membership" },
   { key: "contact", href: "#contact" },
 ] as const;
 

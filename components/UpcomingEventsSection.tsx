@@ -6,6 +6,7 @@ import {
   AlertTriangle,
   CalendarHeart,
   CheckCircle2,
+  Clock,
   KeyRound,
   Loader2,
   Lock,
@@ -13,6 +14,7 @@ import {
   MapPin,
   RefreshCw,
   ShieldCheck,
+  Sparkles,
   Trash2,
   Users,
   X,
@@ -38,9 +40,9 @@ import { useLanguage } from "./LanguageProvider";
 // Stable id and image are NOT translated. Visible title/date/location/
 // description come from translations (t.upcoming.event*).
 const EVENT = {
-  id: "event-may-2026",
+  id: "event-imam-hassan-mar-14",
   image: "/upcoming/WhatsApp%20Image%202026-05-14%20at%209.22.22%20AM.jpeg",
-  imageAlt: "Upcoming Afghanistan Shia Society of Calgary community event",
+  imageAlt: "Birth anniversary of Imam Hassan al-Mujtaba (a.s.) at Markaz-e Tawhid Calgary",
 };
 
 function tpl(str: string, vars: Record<string, string | number>) {
@@ -326,11 +328,15 @@ export default function UpcomingEventsSection() {
                   priority
                 />
               </div>
-              <div className="flex flex-col gap-3 border-t border-emeraldDark-900/5 bg-white p-5 sm:p-7">
+              <div className="flex flex-col gap-4 border-t border-emeraldDark-900/5 bg-white p-5 sm:p-7">
                 <div className="flex flex-wrap items-center gap-2.5 text-sm">
                   <span className="inline-flex items-center gap-1.5 rounded-full bg-gold-500 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-white">
                     <CalendarHeart className="h-3.5 w-3.5" aria-hidden />
                     {t.upcoming.eventDate}
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-emeraldDark-50 px-3 py-1 text-xs font-medium text-emeraldDark-800 ring-1 ring-emeraldDark-200">
+                    <Clock className="h-3.5 w-3.5 text-gold-600" aria-hidden />
+                    {t.upcoming.eventTime}
                   </span>
                   <span className="inline-flex items-center gap-1.5 rounded-full bg-emeraldDark-50 px-3 py-1 text-xs font-medium text-emeraldDark-800 ring-1 ring-emeraldDark-200">
                     <MapPin className="h-3.5 w-3.5 text-gold-600" aria-hidden />
@@ -340,8 +346,51 @@ export default function UpcomingEventsSection() {
                 <h3 className="font-display text-2xl font-semibold leading-tight text-emeraldDark-900 sm:text-3xl">
                   {t.upcoming.eventTitle}
                 </h3>
-                <p className="text-sm leading-relaxed text-gray-600 sm:text-base">
+
+                {/* Devotional poem */}
+                <blockquote className="relative rounded-2xl border border-gold-200 bg-gradient-to-br from-gold-50 to-white p-5 text-emeraldDark-900 shadow-soft">
+                  <Sparkles
+                    className="absolute -top-3 start-5 h-6 w-6 rounded-full bg-white p-1 text-gold-500 ring-1 ring-gold-200"
+                    aria-hidden
+                  />
+                  <p className="text-sm italic leading-relaxed sm:text-base">
+                    {t.upcoming.poemLine1}
+                    <br />
+                    {t.upcoming.poemLine2}
+                    <br />
+                    {t.upcoming.poemLine3}
+                    <br />
+                    {t.upcoming.poemLine4}
+                  </p>
+                </blockquote>
+
+                <p className="text-sm leading-relaxed text-gray-700 sm:text-base">
                   {t.upcoming.eventDescription}
+                </p>
+
+                {/* Program includes */}
+                <div className="rounded-2xl bg-emeraldDark-50/60 p-5 ring-1 ring-emeraldDark-900/5">
+                  <p className="text-xs font-semibold uppercase tracking-widest text-gold-700">
+                    {t.upcoming.programTitle}
+                  </p>
+                  <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+                    {t.upcoming.programItems.map((item) => (
+                      <li
+                        key={item}
+                        className="flex items-start gap-2.5 text-sm leading-relaxed text-emeraldDark-900"
+                      >
+                        <span
+                          aria-hidden
+                          className="mt-1.5 inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-gold-500"
+                        />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <p className="text-xs font-medium uppercase tracking-widest text-gray-400">
+                  {t.upcoming.fromOrganizer}
                 </p>
               </div>
             </div>

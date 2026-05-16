@@ -29,13 +29,35 @@ export default function AboutSection() {
           <div className="relative">
             <div className="relative aspect-[4/5] overflow-hidden rounded-3xl shadow-elegant ring-1 ring-emeraldDark-900/10">
               <Image
-                src="/images/shia1.jpeg"
+                src="/images/PHOTO-2026-05-14-09-08-30.jpg"
                 alt="Members of the Afghanistan Shia Society of Calgary gathered in community"
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-emeraldDark-950/40 via-transparent to-transparent" />
+            </div>
+
+            {/* Small accent photo, top-right */}
+            <div className="absolute -end-4 -top-6 hidden h-32 w-28 overflow-hidden rounded-2xl shadow-elegant ring-4 ring-white sm:block lg:h-40 lg:w-36">
+              <Image
+                src="/images/PHOTO-2026-05-14-09-13-40.jpg"
+                alt="ASSC community event moment"
+                fill
+                sizes="(max-width: 1024px) 144px, 160px"
+                className="object-cover"
+              />
+            </div>
+
+            {/* Small accent photo, mid-left */}
+            <div className="absolute -start-5 top-1/3 hidden h-28 w-24 -rotate-6 overflow-hidden rounded-2xl shadow-elegant ring-4 ring-white md:block lg:h-32 lg:w-28">
+              <Image
+                src="/images/PHOTO-2026-05-14-09-21-16.jpg"
+                alt="ASSC family gathering"
+                fill
+                sizes="(max-width: 1024px) 112px, 128px"
+                className="object-cover"
+              />
             </div>
 
             {/* Floating accent card */}

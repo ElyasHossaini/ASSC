@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import {
   BookOpen,
   CalendarHeart,
@@ -12,6 +13,27 @@ import {
 import { useLanguage } from "./LanguageProvider";
 
 type Accent = "emerald" | "royal" | "gold";
+
+// Small photo strip pulled from the community gallery to bring the
+// programs section to life.
+const PROGRAM_PHOTOS = [
+  {
+    src: "/images/PHOTO-2026-05-14-09-02-42.jpg",
+    alt: "ASSC community gathering",
+  },
+  {
+    src: "/images/PHOTO-2026-05-14-09-08-20.jpg",
+    alt: "Friday program at ASSC",
+  },
+  {
+    src: "/images/PHOTO-2026-05-14-09-14-06.jpg",
+    alt: "Community lecture at ASSC",
+  },
+  {
+    src: "/images/PHOTO-2026-05-14-09-21-17.jpg",
+    alt: "Community event at ASSC",
+  },
+];
 
 const ICONS: LucideIcon[] = [
   CalendarHeart,
@@ -81,6 +103,29 @@ export default function ProgramsSection() {
               </article>
             );
           })}
+        </div>
+
+        {/* Community photo strip */}
+        <div className="mt-16 grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
+          {PROGRAM_PHOTOS.map((photo) => (
+            <a
+              key={photo.src}
+              href="#gallery"
+              className="group relative aspect-[4/3] overflow-hidden rounded-2xl shadow-soft ring-1 ring-emeraldDark-900/5 transition-all duration-300 hover:-translate-y-1 hover:shadow-elegant"
+            >
+              <Image
+                src={photo.src}
+                alt={photo.alt}
+                fill
+                sizes="(max-width: 640px) 50vw, 25vw"
+                className="object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+              <div
+                aria-hidden
+                className="absolute inset-0 bg-gradient-to-t from-emeraldDark-950/50 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+              />
+            </a>
+          ))}
         </div>
       </div>
     </section>

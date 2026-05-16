@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Bell, Clock, Megaphone, Star, type LucideIcon } from "lucide-react";
 import { useLanguage } from "./LanguageProvider";
 
@@ -27,6 +28,29 @@ export default function AnnouncementsSection() {
             <p className="mt-4 max-w-2xl text-base leading-relaxed text-gray-600 sm:text-lg">
               {t.announcements.intro}
             </p>
+
+            {/* Featured community photo */}
+            <div className="relative mt-8 aspect-[16/9] overflow-hidden rounded-3xl shadow-elegant ring-1 ring-emeraldDark-900/10">
+              <Image
+                src="/images/PHOTO-2026-05-14-09-08-20.jpg"
+                alt="ASSC community gathering"
+                fill
+                sizes="(max-width: 1024px) 100vw, 66vw"
+                className="object-cover"
+              />
+              <div
+                aria-hidden
+                className="absolute inset-0 bg-gradient-to-t from-emeraldDark-950/70 via-emeraldDark-950/10 to-transparent"
+              />
+              <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6">
+                <p className="font-arabic text-sm text-gold-300 sm:text-base">
+                  بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
+                </p>
+                <p className="mt-1 font-display text-lg font-semibold text-white sm:text-xl">
+                  {t.nav.siteFullName} · {t.nav.siteSubName}
+                </p>
+              </div>
+            </div>
 
             <ul className="mt-10 space-y-5">
               {t.announcements.items.map((a, i) => {
