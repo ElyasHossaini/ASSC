@@ -155,9 +155,16 @@ export default function Footer() {
           <p>
             &copy; 2026 {SITE.name}. All rights reserved.
           </p>
-          <p className="text-emeraldDark-300">
-            Built with care for the community.
-          </p>
+          <div className="flex items-center gap-4 text-emeraldDark-300">
+            <p>Built with care for the community.</p>
+            <span aria-hidden className="text-emeraldDark-400">·</span>
+            <a
+              href="/?admin#upcoming"
+              className="text-emeraldDark-300 transition hover:text-gold-300"
+            >
+              Organizer
+            </a>
+          </div>
         </div>
       </div>
     </footer>
