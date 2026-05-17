@@ -197,7 +197,7 @@ The web app URL stays the same, so you don't need to update `.env.local`.
 
   ```javascript
   MailApp.sendEmail(
-    "Ghorban1976@yahoo.com",
+    "Assc954@gmail.com",
     "New ASSC signup",
     `${data.firstName} ${data.lastName} — ${data.email} — ${data.phone}`
   );

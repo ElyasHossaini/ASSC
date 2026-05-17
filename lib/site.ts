@@ -6,8 +6,8 @@ export const SITE = {
   address: "3003 10 St NW, Calgary, AB T2K 1H2",
   phone: "403-861-3835",
   phoneHref: "tel:4038613835",
-  email: "Ghorban1976@yahoo.com",
-  emailHref: "mailto:Ghorban1976@yahoo.com",
+  email: "Assc954@gmail.com",
+  emailHref: "mailto:Assc954@gmail.com",
   mapsQuery: "3003+10+St+NW,+Calgary,+AB+T2K+1H2",
 } as const;
 
