@@ -16,6 +16,30 @@ type GalleryItem = {
   alt: string;
 };
 
+// Eid celebration photos (May 28, 2026). Shown as their own group first.
+const EID_FILES: string[] = [
+  "PHOTO-2026-05-28-22-53-16.jpg",
+  "PHOTO-2026-05-28-22-53-17.jpg",
+  "PHOTO-2026-05-28-22-53-17(1).jpg",
+  "PHOTO-2026-05-28-22-53-17(2).jpg",
+  "PHOTO-2026-05-28-22-53-17(3).jpg",
+  "PHOTO-2026-05-28-22-53-17(4).jpg",
+  "PHOTO-2026-05-28-22-53-17(5).jpg",
+  "PHOTO-2026-05-28-22-53-18.jpg",
+  "PHOTO-2026-05-28-22-53-18(1).jpg",
+  "PHOTO-2026-05-28-22-53-18(2).jpg",
+  "PHOTO-2026-05-28-22-53-18(3).jpg",
+  "PHOTO-2026-05-28-22-53-18(4).jpg",
+  "PHOTO-2026-05-28-22-53-18(5).jpg",
+  "PHOTO-2026-05-28-22-53-18(6).jpg",
+  "PHOTO-2026-05-28-22-53-19.jpg",
+];
+
+const EID: GalleryItem[] = EID_FILES.map((name, i) => ({
+  src: `/images/2026-05-31/${encodeURIComponent(name)}`,
+  alt: `Eid celebration photo ${i + 1}`,
+}));
+
 // Featured images shown first (preserved from original gallery)
 const FEATURED: GalleryItem[] = [
   {
@@ -109,7 +133,13 @@ const RECENT: GalleryItem[] = RECENT_FILES.map((name, i) => ({
   alt: `Community event photo ${i + 1}`,
 }));
 
-const ITEMS: GalleryItem[] = [...FEATURED, ...RECENT];
+// Eid group is shown first (most recent), then the community gatherings.
+// ITEMS is the single flat array the lightbox navigates by global index.
+const COMMUNITY: GalleryItem[] = [...FEATURED, ...RECENT];
+const ITEMS: GalleryItem[] = [...EID, ...COMMUNITY];
+
+// Global index offset where the community group begins inside ITEMS.
+const COMMUNITY_OFFSET = EID.length;
 
 const INITIAL_COUNT = 12;
 
@@ -127,7 +157,9 @@ export default function GallerySection() {
   const touchEndX = useRef<number | null>(null);
 
   const total = ITEMS.length;
-  const visible = showAll ? ITEMS : ITEMS.slice(0, INITIAL_COUNT);
+  const communityVisible = showAll
+    ? COMMUNITY
+    : COMMUNITY.slice(0, INITIAL_COUNT);
   const open = openIndex !== null;
 
   const close = useCallback(() => setOpenIndex(null), []);
@@ -178,6 +210,37 @@ export default function GallerySection() {
     touchEndX.current = null;
   };
 
+  // Renders one gallery thumbnail. `globalIndex` is the item's position in the
+  // flat ITEMS array so the lightbox can navigate across all groups.
+  const renderThumb = (item: GalleryItem, globalIndex: number) => (
+    <button
+      key={item.src}
+      type="button"
+      onClick={() => setOpenIndex(globalIndex)}
+      aria-label={tpl(t.gallery.openPhoto, { i: globalIndex + 1, total })}
+      className="group relative aspect-[4/5] overflow-hidden rounded-2xl bg-emeraldDark-50/50 shadow-soft ring-1 ring-emeraldDark-900/5 transition-all duration-300 hover:-translate-y-1 hover:shadow-elegant focus:outline-none focus:ring-2 focus:ring-gold-500 focus:ring-offset-2"
+      suppressHydrationWarning
+    >
+      <Image
+        src={item.src}
+        alt={item.alt}
+        fill
+        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+        className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+      />
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-gradient-to-t from-emeraldDark-950/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+      />
+      <span
+        aria-hidden
+        className="pointer-events-none absolute bottom-3 end-3 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-emeraldDark-900 opacity-0 shadow-soft backdrop-blur transition-all duration-300 group-hover:opacity-100"
+      >
+        <Maximize2 className="h-4 w-4" />
+      </span>
+    </button>
+  );
+
   return (
     <section
       id="gallery"
@@ -201,51 +264,53 @@ export default function GallerySection() {
           </div>
         </div>
 
-        <div className="mt-12 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 lg:gap-5">
-          {visible.map((item, i) => (
-            <button
-              key={item.src}
-              type="button"
-              onClick={() => setOpenIndex(i)}
-              aria-label={tpl(t.gallery.openPhoto, { i: i + 1, total })}
-              className="group relative aspect-[4/5] overflow-hidden rounded-2xl bg-emeraldDark-50/50 shadow-soft ring-1 ring-emeraldDark-900/5 transition-all duration-300 hover:-translate-y-1 hover:shadow-elegant focus:outline-none focus:ring-2 focus:ring-gold-500 focus:ring-offset-2"
-            >
-              <Image
-                src={item.src}
-                alt={item.alt}
-                fill
-                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-              />
-              <span
-                aria-hidden
-                className="pointer-events-none absolute inset-0 bg-gradient-to-t from-emeraldDark-950/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-              />
-              <span
-                aria-hidden
-                className="pointer-events-none absolute bottom-3 end-3 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-emeraldDark-900 opacity-0 shadow-soft backdrop-blur transition-all duration-300 group-hover:opacity-100"
-              >
-                <Maximize2 className="h-4 w-4" />
-              </span>
-            </button>
-          ))}
+        {/* Eid celebration group */}
+        <div className="mt-12">
+          <div className="mb-6 text-center">
+            <h3 className="font-display text-2xl font-bold text-emeraldDark-900 sm:text-3xl">
+              {t.gallery.eidTitle}
+            </h3>
+            <p className="mx-auto mt-2 max-w-xl text-sm leading-relaxed text-gray-600 sm:text-base">
+              {t.gallery.eidIntro}
+            </p>
+          </div>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 lg:gap-5">
+            {EID.map((item, i) => renderThumb(item, i))}
+          </div>
         </div>
 
-        {total > INITIAL_COUNT && (
+        {/* Community gatherings group */}
+        <div className="mt-16">
+          <div className="mb-6 text-center">
+            <h3 className="font-display text-2xl font-bold text-emeraldDark-900 sm:text-3xl">
+              {t.gallery.communityTitle}
+            </h3>
+          </div>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 lg:gap-5">
+            {communityVisible.map((item, i) =>
+              renderThumb(item, COMMUNITY_OFFSET + i)
+            )}
+          </div>
+        </div>
+
+        {COMMUNITY.length > INITIAL_COUNT && (
           <div className="mt-10 flex flex-col items-center gap-3">
             <button
               type="button"
               onClick={() => setShowAll((v) => !v)}
               className="btn-secondary"
+              suppressHydrationWarning
             >
               {showAll
                 ? t.gallery.showFewer
-                : tpl(t.gallery.viewAll, { n: total })}
+                : tpl(t.gallery.viewAll, { n: COMMUNITY.length })}
             </button>
             <p className="text-xs uppercase tracking-widest text-gray-500">
               {tpl(t.gallery.shownOf, {
-                shown: showAll ? total : Math.min(INITIAL_COUNT, total),
-                total,
+                shown: showAll
+                  ? COMMUNITY.length
+                  : Math.min(INITIAL_COUNT, COMMUNITY.length),
+                total: COMMUNITY.length,
               })}
             </p>
           </div>

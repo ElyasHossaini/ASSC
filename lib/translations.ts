@@ -363,6 +363,10 @@ const en = {
     headingB: "community",
     intro:
       "A glimpse into our gatherings, events, and the people who make the Afghanistan Shia Society of Calgary a true community home.",
+    eidTitle: "Eid Celebration",
+    eidIntro:
+      "Joyful moments from our recent Eid celebration, shared together as one community.",
+    communityTitle: "Community Gatherings",
     openPhoto: "Open photo {{i}} of {{total}}",
     viewAll: "View all {{n}} photos",
     showFewer: "Show fewer photos",
@@ -850,6 +854,10 @@ const fa: typeof en = {
     headingB: "جامعهٔ ما",
     intro:
       "نگاهی به گردهمایی‌ها، رویدادها و کسانی که انجمن شیعیان افغانستان کلگری را به خانه‌ای واقعی برای جامعه تبدیل کرده‌اند.",
+    eidTitle: "جشن عید",
+    eidIntro:
+      "لحظات شاد جشن عید اخیر ما، که همگی به‌عنوان یک جامعه در کنار هم گرد آمدیم.",
+    communityTitle: "گردهمایی‌های جامعه",
     openPhoto: "باز کردن عکس {{i}} از {{total}}",
     viewAll: "مشاهدهٔ همهٔ {{n}} عکس",
     showFewer: "نمایش کمتر",
